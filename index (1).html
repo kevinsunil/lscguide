@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentforce Life Sciences — Admin Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14211C;
+    --paper:#EFF1EA;
+    --paper-card:#F8F9F4;
+    --line:#CBD1C2;
+    --line-strong:#9AA592;
+    --ce:#2B6E63; --ce-bg:#E4EEEA;
+    --cl:#5B4A96; --cl-bg:#E9E5F3;
+    --pe:#A85A22; --pe-bg:#F1E4D6;
+    --amber:#B5581F;
+    --good:#2B6E63;
+    --muted:#5B6A5F;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased;}
+  .app{display:grid; grid-template-columns:96px 1fr; min-height:100vh;}
+  @media (max-width:720px){ .app{grid-template-columns:64px 1fr;} main{padding:28px 18px 60px !important;} }
+
+  /* rail */
+  .rail{background:#E4E5DC; border-right:1px solid var(--line); display:flex; flex-direction:column; align-items:center; padding-top:24px; gap:4px; position:sticky; top:0; height:100vh; overflow-y:auto;}
+  .rail-mark{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.12em; color:var(--muted); writing-mode:vertical-rl; transform:rotate(180deg); margin-bottom:22px;}
+  .tab{width:100%; padding:14px 6px; text-align:center; font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.04em; line-height:1.35; color:var(--ink); background:transparent; border:none; border-right:4px solid transparent; cursor:pointer; opacity:.55; transition:all .18s ease;}
+  .tab:hover{opacity:.85;}
+  .tab.active{opacity:1;}
+  .tab[data-d="ce"].active{background:var(--ce-bg); border-right-color:var(--ce); color:var(--ce);}
+  .tab[data-d="cl"].active{background:var(--cl-bg); border-right-color:var(--cl); color:var(--cl);}
+  .tab[data-d="pe"].active{background:var(--pe-bg); border-right-color:var(--pe); color:var(--pe);}
+  .tab[data-d="all"].active{background:#e8e9df; border-right-color:var(--ink);}
+
+  main{padding:44px 56px 90px; max-width:960px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:0 0 10px;}
+  h1{font-family:'Source Serif 4',serif; font-weight:600; font-size:36px; line-height:1.14; margin:0 0 12px; letter-spacing:-.01em;}
+  .sub{font-size:15px; color:var(--muted); max-width:60ch; line-height:1.6; margin:0 0 28px;}
+
+  .search-card{background:var(--paper-card); border:1px solid var(--line); border-radius:4px; padding:6px; display:flex; align-items:center; gap:8px; box-shadow:0 1px 0 rgba(20,33,28,.03);}
+  .search-card input{flex:1; border:none; background:transparent; outline:none; font-family:'Source Serif 4',serif; font-size:18px; padding:12px 10px; color:var(--ink); min-width:0;}
+  .search-card input::placeholder{color:#93998C; font-style:italic;}
+  .go{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em; background:var(--ink); color:var(--paper); border:none; padding:12px 16px; border-radius:3px; cursor:pointer; text-transform:uppercase; white-space:nowrap;}
+  .go:hover{background:#2B4239;}
+
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+  .chip{font-family:'IBM Plex Mono',monospace; font-size:11px; padding:7px 12px; border:1px solid var(--line-strong); border-radius:20px; background:transparent; color:var(--ink); cursor:pointer; transition:all .15s ease;}
+  .chip:hover{border-color:var(--ink); background:#e6e7dd;}
+
+  /* browse */
+  .browse{margin-top:40px;}
+  .browse-head{display:flex; align-items:baseline; justify-content:space-between; border-top:1px solid var(--line); padding-top:22px; margin-bottom:16px;}
+  .browse-head h2{font-family:'Source Serif 4',serif; font-size:18px; margin:0; font-weight:600;}
+  .cat-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px 28px;}
+  @media (max-width:640px){.cat-grid{grid-template-columns:1fr;}}
+  .cat h3{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 8px;}
+  .cat ul{list-style:none; margin:0; padding:0;}
+  .cat li{border-bottom:1px dashed var(--line);}
+  .cat button{width:100%; text-align:left; background:none; border:none; padding:7px 2px; font-size:13.5px; color:var(--ink); cursor:pointer; font-family:'Inter',sans-serif;}
+  .cat button:hover{color:var(--ce); text-decoration:underline;}
+
+  /* result */
+  .result{margin-top:40px; display:none;}
+  .result.show{display:block;}
+  .result-head{display:flex; align-items:baseline; justify-content:space-between; border-bottom:2px solid var(--ink); padding-bottom:14px; margin-bottom:8px; flex-wrap:wrap; gap:10px;}
+  .result-title{font-family:'Source Serif 4',serif; font-size:25px; font-weight:600; margin:0;}
+  .domain-tag{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em; padding:5px 10px; border-radius:3px; text-transform:uppercase; white-space:nowrap;}
+  .domain-tag.ce{background:var(--ce-bg); color:var(--ce);}
+  .domain-tag.cl{background:var(--cl-bg); color:var(--cl);}
+  .domain-tag.pe{background:var(--pe-bg); color:var(--pe);}
+
+  .confidence{display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.05em; margin:10px 0 4px; padding:4px 0;}
+  .confidence.verified{color:var(--good);}
+  .confidence.outline{color:var(--amber);}
+  .confidence::before{content:""; width:6px; height:6px; border-radius:50%; background:currentColor;}
+
+  .permission{font-size:12.5px; color:var(--muted); margin:2px 0 0; font-family:'IBM Plex Mono',monospace;}
+
+  .block-label{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:26px 0 12px;}
+
+  .prereqs{list-style:none; margin:0; padding:0; border-left:3px solid var(--amber); padding-left:16px;}
+  .prereqs li{font-size:14px; padding:9px 0; border-bottom:1px dashed var(--line); display:flex; gap:10px; align-items:flex-start; line-height:1.5;}
+  .prereqs li:last-child{border-bottom:none;}
+  .prereqs li::before{content:"▢"; color:var(--amber); font-size:12.5px; margin-top:2px; flex:none;}
+
+  .steps{list-style:none; margin:0; padding:0; counter-reset:step;}
+  .step{display:grid; grid-template-columns:38px 1fr; gap:14px; padding:15px 0; border-bottom:1px solid var(--line);}
+  .step:last-child{border-bottom:none;}
+  .step-num{font-family:'IBM Plex Mono',monospace; font-size:14px; color:var(--line-strong); counter-increment:step;}
+  .step-num::before{content: counter(step, decimal-leading-zero);}
+  .step-body h3{margin:0 0 4px; font-size:15px; font-weight:600; font-family:'Inter',sans-serif;}
+  .step-body p{margin:0; font-size:13.5px; color:var(--muted); line-height:1.6;}
+  .step-body .where{display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--ce); background:var(--ce-bg); border-radius:3px; padding:2px 7px; margin-bottom:6px;}
+
+  .src-link{display:inline-block; margin-top:24px; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); border:1px solid var(--line); border-radius:20px; padding:6px 14px; text-decoration:none;}
+  .src-link:hover{border-color:var(--ink); color:var(--ink);}
+
+  /* stub (index-only match, no curated detail yet) */
+  .stub{margin-top:40px; display:none; background:var(--paper-card); border:1px solid var(--line); border-radius:4px; padding:26px 28px;}
+  .stub.show{display:block;}
+  .stub .crumb{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px;}
+  .stub h2{font-family:'Source Serif 4',serif; font-size:22px; margin:0 0 10px;}
+  .stub p{font-size:14px; color:var(--muted); line-height:1.6; max-width:56ch; margin:0 0 16px;}
+
+  .empty{margin-top:40px; padding:30px; border:1px dashed var(--line-strong); border-radius:4px; color:var(--muted); font-size:14px; text-align:center; display:none;}
+  .empty.show{display:block;}
+
+  .matchlist{margin-top:16px; display:none;}
+  .matchlist.show{display:block;}
+  .matchlist .lbl{font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:10px;}
+  .matchlist ul{list-style:none; margin:0; padding:0;}
+  .matchlist li button{width:100%; text-align:left; background:var(--paper-card); border:1px solid var(--line); border-radius:3px; padding:11px 14px; margin-bottom:8px; cursor:pointer; font-size:14px; color:var(--ink); display:flex; justify-content:space-between; align-items:center; gap:10px;}
+  .matchlist li button:hover{border-color:var(--line-strong);}
+  .matchlist li small{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); text-transform:uppercase; white-space:nowrap;}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="rail" id="rail">
+    <div class="rail-mark">AGENTFORCE · LS</div>
+    <button class="tab active" data-d="all">ALL<br>DOMAINS</button>
+    <button class="tab" data-d="ce">CUSTOMER<br>ENGMT</button>
+    <button class="tab" data-d="cl">CLINICAL<br>ENGMT</button>
+    <button class="tab" data-d="pe">PATIENT<br>ENGMT</button>
+  </nav>
+
+  <main>
+    <p class="eyebrow">Admin field guide</p>
+    <h1>Tell it what you're<br>setting up.</h1>
+    <p class="sub">Type a record type or feature and get prerequisites and ordered setup steps, sourced from the Agentforce Life Sciences admin documentation.</p>
+
+    <div class="search-card">
+      <input id="q" type="text" placeholder="e.g. &ldquo;enable consent management&rdquo;" autocomplete="off">
+      <button class="go" id="go">Search</button>
+    </div>
+    <div class="chips" id="chips"></div>
+
+    <div class="empty" id="empty">No match yet — try a different term, or browse a domain on the left.</div>
+
+    <div class="matchlist" id="matchlist">
+      <div class="lbl">Found in the guide</div>
+      <ul id="matchlist-items"></ul>
+    </div>
+
+    <div class="result" id="result">
+      <div class="result-head">
+        <h2 class="result-title" id="r-title"></h2>
+        <span class="domain-tag" id="r-domain"></span>
+      </div>
+      <div class="confidence" id="r-confidence"></div>
+      <p class="permission" id="r-permission"></p>
+
+      <div class="block-label">Prerequisites</div>
+      <ul class="prereqs" id="r-prereqs"></ul>
+
+      <div class="block-label">Setup steps</div>
+      <ol class="steps" id="r-steps"></ol>
+
+      <a class="src-link" id="r-src" href="#" target="_blank" rel="noopener">View the official Salesforce Help article ↗</a>
+    </div>
+
+    <div class="stub" id="stub">
+      <div class="crumb" id="stub-crumb"></div>
+      <h2 id="stub-title"></h2>
+      <p id="stub-body"></p>
+      <a class="src-link" id="stub-src" href="#" target="_blank" rel="noopener">Browse this section in Salesforce Help ↗</a>
+    </div>
+
+    <div class="browse" id="browse">
+      <div class="browse-head"><h2 id="browse-title">Browse: All domains</h2></div>
+      <div class="cat-grid" id="cat-grid"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ---------- Taxonomy: real section/article titles from the Agentforce Life Sciences admin guide ---------- */
+const TOC_URL = "https://help.salesforce.com/s/articleView?id=ind.admin_life_sciences.htm&type=5";
+
+const TAXONOMY = {
+  ce: {
+    label: "Customer Engagement",
+    categories: {
+      "Account Management": ["Account Address","Account Merge","Account Search","Account Summarization","Institution Doctor Accounts","Affiliations","Ratings","Bulk Update for Account-Related Records","Data Change Request"],
+      "Engagement Planning": ["Activity Plans","Briefings","Calendar","Key Account Management","Time Off Territory"],
+      "Engagement Execution": ["Consent Management","Medical Inquiries","Medical Insights","Provider Engagement Compliance","Remote Engagement","Surveys","Visit Management"],
+      "Intelligent Content": ["Emails and Templates","Presentations","Next Best Message","Smart Content Search"],
+      "Product Management": ["Product Record Types","Product Hierarchy Settings","Product Territory Alignments","Messages and Objectives"],
+      "Sample Management": ["Sample Inventory Management","Sample Limits","Sample Limit Templates","Territory Product Quantity Allocations"],
+      "Event Management": ["Event Management Participant","Event Subject Assignment","Compliance Management","Monetary Cap","Expense Management"],
+      "Common Components": ["App Alerts","Dynamic Tree View Components","Error Log Management","License Management","Quick and Custom Action Management","Workflows for Life Sciences"]
+    }
+  },
+  cl: {
+    label: "Clinical Engagement",
+    categories: {
+      "Clinical Basics": ["Security and Permissions","Person Accounts","Healthcare Providers","Code Sets and Code Set Bundles"],
+      "Participant Management": ["Participant Management Data Model","Enable Participant Management","Participant Recruitment","Eligibility Assessment and Candidate Registration","Candidate Matching (Einstein Generative AI)","Research Study Randomization"],
+      "Site Management": ["Site Management Data Model","Enable Site Management","Criteria-Based Search and Filter","Site and Investigator Scoring","Site Feasibility Scoring","Agentforce for Site Selection"]
+    }
+  },
+  pe: {
+    label: "Patient Engagement",
+    categories: {
+      "Advanced Therapy Management": ["Advanced Therapy Licenses","Multi-Step Scheduling","Scheduling Policies","Therapy Orchestration","Custody Management"],
+      "Care Programs": ["Set Up Care Programs","Care Program Enrollment Flows","Care Program Consent Documents","Register and Ship Devices"],
+      "Financial Assistance Programs": ["Financial Assistance Program Data Model","Business Rules Engine","Assessment Setup","Decision Tables","Sharing Rules"],
+      "Patient Program Outcomes": ["Outcome Management Data Model","Indicators for Measuring Results","Einstein Generative AI for Outcomes"],
+      "Pharmacy Benefits Verification": ["Benefits Verification Data Model","Manual and Electronic Verification Requests","Pharmacy Benefits Reverification","Einstein Generative AI for Benefits Verification"]
+    }
+  }
+};
+
+/* ---------- Curated, detailed entries ---------- */
+const DETAILS = {
+  consent: {
+    title: "Set Up Consent Management",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?language=en_US&id=ind.lsc_consent_management_setup.htm&type=5",
+    keywords: ["consent","privacy","opt in","opt out","communication preference"],
+    prereqs: [
+      "Customer Engagement managed package installed, with your Consent Administration users already assigned the Life Sciences Commercial Admin permission set",
+      "Know which objects the Consent page writes to — Communication Subscription, Communication Subscription Channel Type, Communication Subscription Consent, Data Use Purpose, Compliance Statement Definition, and Contact Point Address/Phone/Email/Social — since access to these usually isn't in a standard permission set and has to be granted separately",
+      "Decide up front which channels (email, phone, in-person visit) and territories you need to filter subscriptions by"
+    ],
+    steps: [
+      ["Lightning App Builder","Add the Consent Management tab to a record page","Open the Account (or Visit) record page and drag on the Consent Management component so field users have somewhere to view and capture consent."],
+      ["Setup → Data Use Purpose","Create a Data Use Purpose record","This answers \"why are we collecting this consent\" and is what subscriptions get built against — create it before you touch subscriptions."],
+      ["Setup → Engagement Channel Type","Create an Engagement Channel Type","Define each channel consent can apply to (email, phone, visit) as its own record."],
+      ["Setup → Communication Subscription","Create a subscription and add a channel to it","Create the subscription, then attach the channel type(s) from the previous step so they show up as toggles on the Consent page."],
+      ["App Launcher → Life Sciences Commercial → Admin Console","Open Consent Administration","This is where the rest of the general settings live."],
+      ["Consent Administration","Configure the general settings","Turn on the behaviors you need: allow multiple values per channel, allow \"Not Asked\" as a status, let reps lock the capture screen mid-signature, and let users view the signature from the last update."],
+      ["Consent Administration → Signature section","Set the signature requirement","Choose whether a signature is required to capture consent, whether to log geolocation at the time of signing, and the attachment requirements for desktop vs. mobile."],
+      ["Consent Administration → Product Restriction","Set product restriction and territory filters","Decide whether to show restricted products, then pick the fields that filter subscriptions by territory — if no territory field applies, filter by an account field instead."],
+      ["Consent Administration","Configure subscription, disclaimer, and terms filters, then save","This is the point where Consent Administration is functionally live."],
+      ["Page layout / Quick Actions","Add the Capture Consent quick action","Create the quick action and add it to the Account or Visit page layout so reps aren't navigating away from the record to log consent."]
+    ]
+  },
+  briefing: {
+    title: "Enable Briefings",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "outline",
+    permission: "Life Sciences Commercial Admin, plus the Briefings permission sets you clone in step 2.",
+    source: TOC_URL,
+    keywords: ["briefing","audio briefing","pre visit"],
+    prereqs: [
+      "Account Summarization is already configured — Briefings narrates from those summaries, so it has nothing to say without them",
+      "Field users have the base Life Sciences Cloud permission set license assigned",
+      "You've decided which presentation content, if any, briefings are allowed to reference"
+    ],
+    steps: [
+      ["Admin Console","Turn on Briefings at the org level","Flip on the Briefings feature toggle — nothing generates until this is on."],
+      ["Setup → Permission Sets","Clone the standard permission sets","Salesforce ships read-only Briefings permission sets — clone them (don't edit the originals) and assign the clones to the users who should hear briefings."],
+      ["Account Summarization config","Point Briefings at your summarization setup","Confirm the summarization configuration you already have is the one Briefings should pull from, so the narration matches the account summary."],
+      ["Manage Presentation Content Definition Assignments","Decide which presentation content is eligible","Choose which content definitions can be surfaced inside a generated briefing."],
+      ["Setup → Flows","Clone and activate the scheduled flow","Clone the out-of-the-box scheduled flow that generates briefings and activate your copy — briefings won't generate on a schedule until this flow is running."],
+      ["Mobile app settings","Check mobile app configuration","Confirm briefings play back correctly in the Life Sciences Cloud mobile app before rolling out to field reps."]
+    ]
+  },
+  account: {
+    title: "Create a Life Sciences User + Account Setup",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "outline",
+    permission: "Setup access (profiles, permission sets, sharing) — not a Life Sciences-specific permission.",
+    source: TOC_URL,
+    keywords: ["account","user","hcp record","create account","new user"],
+    prereqs: [
+      "Customer Engagement managed package is installed",
+      "Person Accounts are enabled if individual HCPs will be represented as accounts rather than contacts",
+      "You've decided which record types you need (HCP, HCO, etc.) before you start building layouts — retrofitting record types later means redoing sharing rules too"
+    ],
+    steps: [
+      ["Setup → Profiles","Create custom profiles for your user types","Clone from a Life Sciences base profile per role — field rep, manager, admin — rather than reusing one profile for everyone."],
+      ["Setup → Users","Add the users","Create the user records and assign each one the correct profile plus a Life Sciences Cloud license."],
+      ["Setup → Permission Sets","Assign permission sets","Layer on the Customer Engagement permission sets that match each user's role on top of their profile."],
+      ["Lightning App Builder / Object Manager","Build account and person account page layouts","Create one layout and record type per persona (HCP, HCO) so the fields shown match what that persona actually needs to see."],
+      ["Setup → Sharing Settings","Define account search sharing settings","Set org-wide defaults and any sharing rules needed so each rep's search results are scoped to their own territory."],
+      ["Account tab","Create the account record","With profiles, layouts, and sharing all in place, create the account or person account — this is the last step, not the first."]
+    ]
+  },
+  compliance: {
+    title: "Turn On Provider Engagement Compliance",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "outline",
+    permission: "Life Sciences Commercial Admin.",
+    source: TOC_URL,
+    keywords: ["provider engagement compliance","compliance cycle","action plan compliance"],
+    prereqs: [
+      "Care Program and Action Plan Template records exist, since compliance cycles are generated from one of the two",
+      "You understand the difference between the two generation paths — from a Care Program vs. from an Action Plan Template — before you pick one",
+      "Territories and target accounts for the compliance program are already defined"
+    ],
+    steps: [
+      ["Admin Console","Turn on Provider Engagement Compliance","Enable the feature at the org level before configuring anything downstream."],
+      ["Setup → Care Program / Action Plan Template","Update the linked Care Program, Care Program Product, and Action Plan Template","Make sure these three records are aligned — the compliance cycle generator reads from all three."],
+      ["Setup → Sharing Rules","Configure sharing rules for Action Plan Templates","Set who can see and edit templates before cycles start generating from them."],
+      ["Compliance program record","Associate target accounts with the compliance program","Attach the accounts that should be evaluated for compliance."],
+      ["Compliance record","Generate compliance cycles","Trigger cycle generation either from the Care Program or from the Action Plan Template, depending on which path you set up."],
+      ["Visit record","Create a visit for a compliance cycle and capture activities","Once cycles exist, reps log the actual compliance activities against a visit tied to that cycle."]
+    ]
+  },
+  participant: {
+    title: "Enable Participant Management",
+    domain: "cl",
+    domainLabel: "Clinical Engagement",
+    confidence: "outline",
+    permission: "Requires Clinical Engagement permission set licenses, assigned per user.",
+    source: TOC_URL,
+    keywords: ["participant management","clinical trial","research study","candidate","enrollment"],
+    prereqs: [
+      "Clinical Engagement basics are set up — Person Accounts enabled, healthcare provider records exist",
+      "You know which objects your recruitment and enrollment data will land in before you start loading data",
+      "If you're using Experience Cloud for candidate self-registration, decide on guest vs. authenticated access up front"
+    ],
+    steps: [
+      ["Admin Console","Enable Participant Management","Turn the feature on at the org level."],
+      ["Setup → Permission Sets","Assign permission sets for Participant Management users","Give study coordinators and recruiters the permission sets that match their role."],
+      ["Data load / Setup","Add data for participant recruitment and enrollment","Load the reference data recruitment will run against before you create a live study."],
+      ["Care Program record","Create a Care Program and Care Program Detail","A Research Study lives under a Care Program — set this up first."],
+      ["Research Study record","Create a Research Study, its sites, and comparison groups","Build out the study structure: sites, candidate comparison groups, and assessment questions."],
+      ["Experience Cloud setup","Set up the Experience Cloud site for Participant Management","Clone permission set licenses, and create sharing rules for both guest and authenticated users if candidates will self-register."],
+      ["Omniscript setup","Set up the eligibility assessment and candidate registration Omniscripts","These are what candidates actually interact with to check eligibility and register."]
+    ]
+  },
+  careprogram: {
+    title: "Set Up a Care Program",
+    domain: "pe",
+    domainLabel: "Patient Engagement",
+    confidence: "outline",
+    permission: "Requires Patient Engagement permission set licenses, assigned per user.",
+    source: TOC_URL,
+    keywords: ["care program","patient support program","financial assistance","enrollee"],
+    prereqs: [
+      "You've mapped any external program enrollment fields to your org's schema before building the enrollment flow",
+      "User records exist for the site participants who'll manage enrollees",
+      "Consent documents for the program are ready if you plan to attach them at setup"
+    ],
+    steps: [
+      ["Setup → Field Mapping","Map external program enrollment fields to your org","Do this before building the enrollment flow, since the flow reads from these mapped fields."],
+      ["Setup → Permissions","Configure user permissions and sharing rules","Set this up before creating user records so new users inherit the right access."],
+      ["Setup → Users","Create user records for care program site participants","Add the people who will manage enrollees at each site."],
+      ["Care Program record","Create a Care Program and add related records","This is the anchor record — goals, providers, and enrollees all attach to it."],
+      ["Care Program → Goals","Create a Care Program Goal and add providers","Define what the program is measuring and which providers participate."],
+      ["Flow Builder","Configure the program enrollment flow","Build or clone the flow that walks a coordinator through enrolling a participant."],
+      ["Experience Cloud setup","Create an Experience Cloud site and set up member access","Do this if patients or site members need self-service access to the program."],
+      ["Consent documents","Add and associate consent documents with the Care Program","Attach the consent forms enrollees need to sign, and grant site members access to view them."]
+    ]
+  }
+};
+
+/* keyword -> detail key lookup, built once */
+const KEY_INDEX = [];
+Object.entries(DETAILS).forEach(([key, d]) => {
+  d.keywords.forEach(k => KEY_INDEX.push({k, key}));
+  KEY_INDEX.push({k: d.title.toLowerCase(), key});
+});
+
+const CHIP_EXAMPLES = [
+  {label:"Enable Consent Management", key:"consent"},
+  {label:"Turn on Briefings", key:"briefing"},
+  {label:"Create a user + account", key:"account"},
+  {label:"Turn on Provider Engagement Compliance", key:"compliance"},
+  {label:"Enable Participant Management", key:"participant"},
+  {label:"Set up a Care Program", key:"careprogram"}
+];
+
+/* ---------- DOM refs ---------- */
+const rTitle = document.getElementById('r-title');
+const rDomain = document.getElementById('r-domain');
+const rConf = document.getElementById('r-confidence');
+const rPerm = document.getElementById('r-permission');
+const rPrereqs = document.getElementById('r-prereqs');
+const rSteps = document.getElementById('r-steps');
+const rSrc = document.getElementById('r-src');
+const result = document.getElementById('result');
+const stub = document.getElementById('stub');
+const empty = document.getElementById('empty');
+const matchlist = document.getElementById('matchlist');
+const matchlistItems = document.getElementById('matchlist-items');
+const browse = document.getElementById('browse');
+const browseTitle = document.getElementById('browse-title');
+const catGrid = document.getElementById('cat-grid');
+let currentDomainFilter = 'all';
+
+function hideAllResultPanels(){
+  result.classList.remove('show');
+  stub.classList.remove('show');
+  empty.classList.remove('show');
+  matchlist.classList.remove('show');
+}
+
+function renderDetail(key){
+  const d = DETAILS[key];
+  hideAllResultPanels();
+  browse.style.display = 'none';
+  rTitle.textContent = d.title;
+  rDomain.textContent = d.domainLabel;
+  rDomain.className = 'domain-tag ' + d.domain;
+  rConf.className = 'confidence ' + d.confidence;
+  rConf.textContent = d.confidence === 'verified'
+    ? 'Verified against the source article'
+    : 'Outline from doc structure — confirm exact clicks before rollout';
+  rPerm.textContent = d.permission || '';
+  rPrereqs.innerHTML = d.prereqs.map(p => `<li>${p}</li>`).join('');
+  rSteps.innerHTML = d.steps.map(([where,t,desc]) => `
+    <li class="step">
+      <span class="step-num"></span>
+      <div class="step-body">
+        <span class="where">${where}</span>
+        <h3>${t}</h3>
+        <p>${desc}</p>
+      </div>
+    </li>
+  `).join('');
+  rSrc.href = d.source;
+  result.classList.add('show');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderStub(title, domain){
+  const dom = TAXONOMY[domain];
+  hideAllResultPanels();
+  browse.style.display = 'none';
+  document.getElementById('stub-crumb').textContent = dom.label;
+  document.getElementById('stub-title').textContent = title;
+  document.getElementById('stub-body').textContent =
+    "This feature is in the admin guide's index, but a curated step-by-step hasn't been written for it yet. Open the official article below — once it's reviewed, it'll get the same prerequisites-and-steps treatment as the entries above.";
+  document.getElementById('stub-src').href = TOC_URL;
+  stub.classList.add('show');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function searchIndex(q){
+  const hits = [];
+  Object.entries(TAXONOMY).forEach(([dkey, dom]) => {
+    Object.entries(dom.categories).forEach(([cat, items]) => {
+      items.forEach(item => {
+        if(item.toLowerCase().includes(q)) hits.push({title:item, domain:dkey, cat});
+      });
+    });
+  });
+  return hits;
+}
+
+function doSearch(query){
+  const q = query.trim().toLowerCase();
+  if(!q) return;
+
+  // 1. curated detail match
+  const kw = KEY_INDEX.find(e => q.includes(e.k) || e.k.includes(q));
+  if(kw){ renderDetail(kw.key); return; }
+
+  // 2. taxonomy match
+  const hits = searchIndex(q);
+  hideAllResultPanels();
+  browse.style.display = 'none';
+  if(hits.length === 1){
+    renderStub(hits[0].title, hits[0].domain);
+    return;
+  }
+  if(hits.length > 1){
+    matchlistItems.innerHTML = hits.slice(0,10).map(h => `
+      <li><button data-title="${h.title.replace(/"/g,'&quot;')}" data-domain="${h.domain}">
+        <span>${h.title}</span><small>${TAXONOMY[h.domain].label}</small>
+      </button></li>
+    `).join('');
+    matchlist.classList.add('show');
+    window.scrollTo({top:0, behavior:'smooth'});
+    return;
+  }
+  empty.classList.add('show');
+}
+
+document.getElementById('go').addEventListener('click', () => doSearch(document.getElementById('q').value));
+document.getElementById('q').addEventListener('keydown', e => { if(e.key === 'Enter') doSearch(e.target.value); });
+
+matchlistItems.addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  renderStub(btn.dataset.title, btn.dataset.domain);
+});
+
+/* chips */
+const chipsEl = document.getElementById('chips');
+chipsEl.innerHTML = CHIP_EXAMPLES.map(c => `<button class="chip" data-key="${c.key}">${c.label}</button>`).join('');
+chipsEl.addEventListener('click', e => {
+  const btn = e.target.closest('.chip');
+  if(!btn) return;
+  document.getElementById('q').value = btn.textContent;
+  renderDetail(btn.dataset.key);
+});
+
+/* domain rail + browse */
+function renderBrowse(domain){
+  hideAllResultPanels();
+  browse.style.display = 'block';
+  const domains = domain === 'all' ? Object.keys(TAXONOMY) : [domain];
+  browseTitle.textContent = domain === 'all' ? 'Browse: All domains' : 'Browse: ' + TAXONOMY[domain].label;
+  let html = '';
+  domains.forEach(dkey => {
+    const dom = TAXONOMY[dkey];
+    Object.entries(dom.categories).forEach(([cat, items]) => {
+      html += `<div class="cat"><h3>${domain==='all' ? dom.label+' — ' : ''}${cat}</h3><ul>`;
+      items.forEach(item => {
+        html += `<li><button data-title="${item.replace(/"/g,'&quot;')}" data-domain="${dkey}">${item}</button></li>`;
+      });
+      html += `</ul></div>`;
+    });
+  });
+  catGrid.innerHTML = html;
+}
+catGrid.addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  const q = btn.dataset.title.toLowerCase();
+  const kw = KEY_INDEX.find(en => q.includes(en.k) || en.k.includes(q));
+  if(kw){ renderDetail(kw.key); } else { renderStub(btn.dataset.title, btn.dataset.domain); }
+});
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentDomainFilter = tab.dataset.d;
+    hideAllResultPanels();
+    renderBrowse(currentDomainFilter);
+  });
+});
+
+/* initial state */
+renderBrowse('all');
+</script>
+</body>
+</html>
