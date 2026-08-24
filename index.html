@@ -643,6 +643,89 @@ const DETAILS = {
       ["New Affiliation form","Set effective start and end dates","Defines the active window for the relationship."],
       ["Save","Save the affiliation","The record is created immediately; no approval step unless a separate DCR configuration applies to the object."]
     ]
+  },
+  bulkedit: {
+    title: "Enable Users to Make Changes in Bulk",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_enable_bulk_edit.htm&language=en_US&type=5",
+    keywords: ["bulk update", "bulk edit", "mass edit", "related lists bulk"],
+    prereqs: [
+      "Decide whether bulk edit should be available to a specific user profile or to every profile in the org before turning it on — this is a single toggle, either scoped or global"
+    ],
+    steps: [
+      ["App Launcher → Admin Console","Go to Mobile → Profile-Based App Settings","This is the same settings area used for other mobile app profile-level toggles."],
+      ["Profile-Based App Settings","Select Allow users to bulk edit","This one toggle is what enables reps to edit multiple account-related records from the mobile app in a single pass."],
+      ["Save","Save your changes","Takes effect for the selected profile(s) immediately — no further configuration needed for the base capability."]
+    ]
+  },
+  accountsearch: {
+    title: "Configure Account Search",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set; some settings are configured at the user/profile level.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_account_search_set_account_search.htm&language=en_US&type=5",
+    keywords: ["account search", "search accounts", "find account", "duplicate prevention", "external search"],
+    prereqs: [
+      "Decide whether reps need external search (MDM system, or IQVIA's OneKey database) in addition to internal Salesforce search — this determines whether you need the MuleSoft integration piece",
+      "Know your territory alignment rules, since search checks whether an account is already in the user's territory before offering external results"
+    ],
+    steps: [
+      ["Admin Console → Account Search settings","Define sharing settings for account search","Configure the Care Specialty object's sharing settings — this isn't cosmetic, it's what makes the automatic update of searchable HCP data in the nightly batch job actually succeed."],
+      ["Admin Console → Account Search settings","Configure user-specific country settings","Narrow each user's search scope by defining which countries they can search and which one is their preferred country for specific interactions."],
+      ["Admin Console → Account Search settings, org and profile level","Customize account search preferences","Set the appearance and behavior of search options — this can be tuned differently per profile, not just globally."],
+      ["Admin Console → Account Search settings, org and user level","Configure external search behavior","Controls how search behaves when it reaches outside Salesforce — set this before turning on any external source."],
+      ["Admin Console → Account Search settings, org and profile level","Configure advanced search","Set the criteria used for advanced search and how results are returned, based on record type."],
+      ["MuleSoft integration setup","Set up external search using the built-in MuleSoft integration","Connect to an external data source like an MDM system or IQVIA's OneKey so reps can find and add accounts that don't exist in Salesforce yet."],
+      ["Standard Accounts tab settings","Configure search before account creation","Forces a search for matching accounts before a new record can be created from the standard Accounts tab — this is the actual duplicate-prevention mechanism, not just a suggestion to search first."]
+    ]
+  },
+  accountsummarization: {
+    title: "Set Up Account Summarization",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires Life Sciences Cloud, Agentforce for Life Sciences Cloud, Einstein GPT Prompt Builder, and Einstein GPT Platform licenses in addition to the managed package.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_account_summarization.htm&language=en_US&type=5",
+    keywords: ["account summarization", "account summary", "agent generated summary", "pre visit summary"],
+    prereqs: [
+      "Budget for LLM token usage and cost — Account Summarization consumes tokens every time it generates a summary, and this is easy to overlook when estimating rollout cost",
+      "Decide whether different profiles need different summary content — this is configured through separate profile-specific graphs, not a single global setting"
+    ],
+    steps: [
+      ["Admin Console → Permissions and Admin Settings","Grant access to Einstein Generative AI and Cross-Object Field History settings","Both are required before summaries can generate — this is a distinct permissions pass from standard Life Sciences license assignment."],
+      ["Data setup review","Review Account Summarization's data prerequisites","Summarization depends on data already being structured a specific way in your org — check this before building anything else, since it's the foundation the rest of the setup sits on."],
+      ["History tracking settings","Configure history tracking for the fields you want summarized","Choose exactly which fields feed into the summary — reps are told what's changed since their last interaction with the account based on this selection."],
+      ["Cross-Object Graph builder","Create a cross-object graph for Account Summarization","The graph starts with Account as the root node and maps which related objects and fields feed into the summary — start from the graph template or build one from scratch."],
+      ["Cross-Object Graph assignment","Assign the graph to an org or a specific profile","This is what lets different roles see differently-scoped summaries — assign one graph org-wide, or different graphs per profile."],
+      ["Customization settings (optional)","Customize how and when summaries generate","Layer on batch job timing and generation behavior once the base graph and history tracking are working correctly."]
+    ]
+  },
+  institutiondoctor: {
+    title: "Turn On Institution Doctor Accounts",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "outline",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_account_management.htm&language=en_US&type=5",
+    keywords: ["institution doctor", "ins doc account", "japan hcp", "hcp at hco"],
+    prereqs: [
+      "This feature is specifically for tracking an HCP's activity at a particular institution (common practice in markets like Japan) — confirm it's actually the right fit before enabling it, since it changes how visits, inquiries, and insights get attributed",
+      "Base HCP and HCO account structures already exist, since an Institution Doctor account represents the relationship between an existing HCP and an existing HCO, not a new account type from scratch"
+    ],
+    steps: [
+      ["Setup review","Get your org ready for Institution Doctor Accounts","Salesforce's own get-ready checklist for this feature — work through it before turning anything on."],
+      ["Admin Console","Turn on Institutional Doctor Accounts","This is the org-level toggle — once enabled, Salesforce creates Ins Doc accounts representing an HCP's relationship with a specific institution, and reps capture visits, inquiries, and insights within that Ins Doc context rather than against the HCP or HCO alone."],
+      ["Object Manager","Configure Institution Doctor Account record types","Set up the record types that distinguish Ins Doc accounts from standard HCP/HCO accounts."],
+      ["Admin Console → Search settings","Configure the Institution Doctor Account search filter","Controls how these accounts surface in search alongside standard accounts."],
+      ["Related Lists setup","Configure HCP and HCO related lists","Set up how the underlying HCP and HCO records display in relation to the Ins Doc account."],
+      ["Territory alignment","Align Institution Doctor territory with HCP and HCO","Make sure territory alignment is consistent across all three related records — misalignment here is a common source of reps not seeing accounts they should."],
+      ["Batch Jobs section","Review the Institution Doctor Account batch jobs","These keep Ins Doc accounts in sync as underlying HCP/HCO data changes — schedule or run manually as needed."],
+      ["Admin Console (if needed later)","Turn off Institution Doctor Account creation","Available if you need to stop new Ins Doc accounts from being created without disabling the feature entirely."]
+    ]
   }
 };
 
@@ -668,6 +751,10 @@ const CHIP_EXAMPLES = [
   {label:"Configure account addresses", key:"accountaddress"},
   {label:"Set up Data Change Request", key:"datachangerequest"},
   {label:"Create a Provider Affiliation", key:"provideraffiliation"},
+  {label:"Enable bulk edit", key:"bulkedit"},
+  {label:"Configure Account Search", key:"accountsearch"},
+  {label:"Set up Account Summarization", key:"accountsummarization"},
+  {label:"Turn on Institution Doctor Accounts", key:"institutiondoctor"},
   {label:"Turn on Briefings", key:"briefing"},
   {label:"Create a user + account", key:"account"},
   {label:"Turn on Provider Engagement Compliance", key:"compliance"},
