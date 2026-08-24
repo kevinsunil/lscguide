@@ -355,6 +355,294 @@ const DETAILS = {
       ["Experience Cloud setup","Create an Experience Cloud site and set up member access","Do this if patients or site members need self-service access to the program."],
       ["Consent documents","Add and associate consent documents with the Care Program","Attach the consent forms enrollees need to sign, and grant site members access to view them."]
     ]
+  },
+  samplelimits: {
+    title: "Set Up Sample Limits",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_sample_limit_templates_create_generic.htm&language=en_US&type=5",
+    keywords: ["sample","sample limit","samples","sample disbursement","sample inventory"],
+    prereqs: [
+      "Sample Inventory Management is already enabled — sample limits enforce rules against disbursements, so there's nothing to enforce against until inventory is set up",
+      "Decide your enforcement model up front: Error blocks a disbursement outright, Warning lets the rep choose to proceed — this can't easily be changed per-template later without confusing reps",
+      "Know your priority ordering if you'll have multiple templates that could apply to the same account/product combination — the highest-priority template wins"
+    ],
+    steps: [
+      ["App Launcher → Admin Console","Add the default sample limit templates","Start from Salesforce's out-of-the-box generic template rather than building from scratch."],
+      ["Admin Console → Sample Limits → Sample Limit Templates → New","Create a custom generic template","Clone the default generic template so your custom version inherits its rules and conditions instead of starting blank."],
+      ["New Sample Limit Template form","Enter the label, API name, and priority","The priority number decides which template wins when more than one could apply to the same account/product combination."],
+      ["New Sample Limit Template form","Set the limit enforcement type","Choose Error to block disbursements that exceed the limit outright, or Warning to let the rep decide whether to continue."],
+      ["New Sample Limit Template form","Mark the template Active, then save","A template isn't available for product assignment until it's active."],
+      ["Sample Limit Template → Product Assignments","Assign the template to products","This is what actually connects the limit rules to specific products."],
+      ["Admin Console → Sample Limits → Batch Jobs","Run Assign Sample Limit Templates to Accounts","Initializes the templates for existing HCP/HCO accounts — this creates one provider sample limit record per account/product/template combination."],
+      ["Admin Console → Sample Limits → Batch Jobs","Run Assign Sample Limit Template to Products","Run this whenever you add new products to an existing template or change its rules, so records get created or updated for the new products."],
+      ["Sample Limit automation settings","Automate sample limits for new accounts","Set this up so newly created HCP/HCO accounts get sample limit records automatically instead of needing a manual batch run each time."]
+    ]
+  },
+  mergeaccounts: {
+    title: "Merge Two Accounts Manually",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_account_merge_merge_accounts_manually.htm&language=en_US&type=5",
+    keywords: ["merge account","duplicate account","account merge","combine accounts"],
+    prereqs: [
+      "You know which of the two duplicate accounts should be the surviving (winner) record — this can't be undone once confirmed",
+      "The Life Sciences Commercial Admin permission set is assigned to whoever is doing the merge"
+    ],
+    steps: [
+      ["App Launcher","Find and select Accounts","Navigate to the Accounts tab, not a specific record, to start from the list view."],
+      ["Account list","Select the account you want to keep as the consolidated account","Open the record that should survive the merge — this becomes the winner account."],
+      ["Account record → Quick Actions","Select Account Merge","This opens the merge tool scoped to the record you're currently viewing."],
+      ["Merge Account window","Search for and select the duplicate account to merge","Pick the second, duplicate account that will be absorbed into the winner."],
+      ["Merge Account window","Optionally check \"Retain merged account field values when consolidated account field values are blank\"","This fills gaps on the winner record with data from the duplicate instead of leaving them blank, then click Next."],
+      ["Select Fields to Retain window","Choose which field values to keep","For any field where the two records differ, pick which value survives on the merged record, then click Next."],
+      ["Confirmation screen","Click Confirm","This is permanent — the duplicate account is deleted and its data folded into the surviving record."]
+    ]
+  },
+  quickactions: {
+    title: "Set Up and Manage Quick Actions",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Setup/Admin Console access; no separate Life Sciences permission set required to build actions, but assigning them to users depends on profile settings.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_quick_action_management.htm&language=en_US&type=5",
+    keywords: ["quick action","custom action","action button"],
+    prereqs: [
+      "Know which object the action needs to live on (Account, Visit, etc.) before you start — leaving this blank causes duplicate actions with the same name to show up for users",
+      "Decide which profiles should see the action, since visibility is controlled per-profile, not globally by default"
+    ],
+    steps: [
+      ["App Launcher → Life Sciences Commercial → Admin Console","Open Quick and Custom Action Administration","This is the central place actions are created and managed, separate from standard Salesforce Setup."],
+      ["Quick and Custom Action Administration","Select Quick Actions, then New","Starts the action creation form."],
+      ["New Quick Action form","Enter the label, name, action name, location, and sort order","Sort order controls where the action lands relative to others on the same page."],
+      ["New Quick Action form","Set optional values as needed","Mobile-only flag, icon, color, associated object, and record type are all available if the action needs to look or behave differently on mobile."],
+      ["SObject field","Select the object where the action is available","Leaving this blank is the most common setup mistake — it causes duplicate actions with the same name to appear for users."],
+      ["Profile assignment","Select which profiles can see the action","This is what actually controls who sees the action — creating it alone doesn't make it visible to anyone."]
+    ]
+  },
+  appalerts: {
+    title: "Set Up App Alerts",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires access to assign Apex class permissions and activate the Life Sciences Commercial app for the relevant profile.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_app_alerts.htm&language=en_US&type=5",
+    keywords: ["app alert","notification","announcement","home office announcement"],
+    prereqs: [
+      "Decide which context type each alert needs before building it — Global, Object, or Tab — since that determines where in the app it can appear",
+      "Know your territory structure if alerts should be scoped to specific regions rather than shown to everyone"
+    ],
+    steps: [
+      ["Admin Console","Configure trigger handlers for App Alerts","These have to be active for alerts to fire based on record or system events."],
+      ["Setup → Apex Class Access","Assign access to the alert-related Apex classes","Alerts won't function for users whose profile doesn't have this class access granted."],
+      ["Setup → App Manager","Activate the Life Sciences Commercial app for the standard user profile","Alerts display inside this app, so it needs to be active for the profiles that should see them."],
+      ["App Alert record → New","Create an app alert and choose a context type","Global shows everywhere, Object ties it to a specific record type (like Account or Visit), Tab ties it to a specific tab — this choice controls where it surfaces."],
+      ["App Alert record","Add an additional message if needed","This field supports formatted text, navigation links, external action buttons, and tags so users can act directly from the alert."],
+      ["App Alert record → Type field","Set Type to Announcement for home office broadcasts","This turns the alert into a home-page announcement rather than a record-specific notification."],
+      ["App Alert Territories","Associate the alert with specific territories","Restricts visibility so only users in the relevant territories see it — skip this if the alert is meant for everyone."]
+    ]
+  },
+  ratingslayout: {
+    title: "Create a Ratings Layout",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_ratings_create_ratings_layout.htm&language=en_US&type=5",
+    keywords: ["rating","ratings layout","rating card","account rating"],
+    prereqs: [
+      "Decide which levels you're rating — account, territory, product, team, or address — before you start, since each level pulls fields from a different object",
+      "For team-based ratings, know that if a user belongs to multiple groups, you'll need the PrimaryUser field in UserAdditionalInfo populated so the right group's ratings show"
+    ],
+    steps: [
+      ["App Launcher → Life Sciences Commercial → Admin Console","Open Ratings in the Setup page","This is where rating layouts are built, separate from standard page layout tools."],
+      ["Ratings Layouts page → New Layout","Name the layout and click Create","This creates the shell layout you'll build on next."],
+      ["Layout builder → next to the Ratings label","Select the object the rating applies to","Account, Territory, Product, or Team — this determines which fields are available to add."],
+      ["Display Type section","Choose how the rating should appear","Options like Field, Show Percentage Change, Ranges, or Format each open different configuration fields — fill in the source field and a custom name for the rating."],
+      ["Ratings section in the pane","Add fields from the selected object","Click the available fields to add them to the layout, then drag rating cards into position on the canvas."],
+      ["Layout canvas","Arrange product and team ratings into columns","Product ratings group under the Ratings column, one column per product; team ratings arrange similarly — drag to reorder columns as needed."],
+      ["Save","Save the layout","The layout is created in the admin console but isn't live in the mobile app yet."],
+      ["Object schema / Metadata cache","Activate supported objects and generate a metadata cache","This last step is what actually makes the layout available in the mobile app — skipping it means the layout exists but nobody sees it on mobile."]
+    ]
+  },
+  emailtemplates: {
+    title: "Upload and Create Email Templates",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_email_templates_upload_create.htm&language=en_US&type=5",
+    keywords: ["email template","emails","email","send email"],
+    prereqs: [
+      "Build the email template ZIP file first — it needs an index.html per supported language, and optionally a thumbnail.jpg, an attachments folder, and a fragments folder for reusable HTML blocks reps can customize",
+      "Know which communication subscription record should govern opt-in/opt-out for this template before you configure consent settings",
+      "Decide whether this template is for manual rep use or automated sending (like remote visit invitations) — that changes which fields you fill in"
+    ],
+    steps: [
+      ["App Launcher → Admin Console","Find and select Email, then Email Templates, then New","This starts the upload flow — templates are managed centrally here, not in standard Salesforce email template setup."],
+      ["New Email Template form","Upload the email template ZIP file","This is the packaged index.html, attachments, and fragments you built beforehand."],
+      ["New Email Template form","Enter general information","Email subject, template name, and start/end dates control when and how the template is available."],
+      ["Template detail fields","Configure sender, topics, product, and survey","Sender/reply address type, topic categorization for search, the product that triggers this template, and any survey to embed."],
+      ["Template detail fields","Set editing and BCC behavior","Decide whether reps can edit the subject or content, and which addresses should be BCC'd by default."],
+      ["Automated Email Invitation fields","Configure automation if this template sends without a rep","Set the visit context and the visit action that triggers Salesforce to send it automatically, and mark it as the default template for that context if needed."],
+      ["Communication Subscription field","Set consent handling","Choose the subscription record that governs opt-in/opt-out, and decide whether this template ignores opt-out preferences (rare, only for required communications)."],
+      ["Save, then activate","Activate the template","A saved template isn't available to reps until it's activated — deactivate later if it needs to be retired."],
+      ["Fragments","Share the template's fragments with reps","This is what lets reps customize the email body using the reusable HTML blocks you packaged in."]
+    ]
+  },
+  visitmanagement: {
+    title: "Set Up Visit Management (Core Setup)",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set for setup; end users need Life Sciences Field Sales Representative, Field Medical, or Key Account Management permission sets depending on role.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_visit_management_get_ready.htm&language=en_US&type=5",
+    keywords: ["visit management", "visit", "visits", "field visit", "sales visit"],
+    prereqs: [
+      "Decide which of the four visit-related permission sets each user type needs before assigning anything — Field Sales Rep and Field Medical/Key Account Management differ specifically on sampling access",
+      "Know where in your workflow users should be able to start a visit (Account Profile, Homepage, or Search results) — this is a deliberate configuration choice, not automatic",
+      "This core setup only gets visits functioning — sample disbursement validations, compliance statements, and post-visit expense features are separate configuration passes layered on top"
+    ],
+    steps: [
+      ["Setup → Permission Sets","Assign the four Life Sciences visit permission sets by role","Life Sciences Commercial Admin (configure settings/layouts/scripts in Admin Console), Life Sciences Field Sales Representative (create visits, disburse samples, capture signatures), Life Sciences Field Medical (record visits and medical insights, no sampling), Life Sciences Key Account Management (record visits and assessment tasks, no sampling)."],
+      ["Admin Console → Visit settings","Configure how visits are started","Decide and set where users can initiate a visit — from the Account Profile, the Homepage, or Search results — to match how your field teams actually work."],
+      ["App Launcher → Life Sciences Commercial → Admin Console","Open Trigger Handler Administration","This is a separate, easy-to-miss step — visits will save and sync incorrectly without these handlers active."],
+      ["Trigger Handler Administration","Activate the visit trigger handlers","Activate ContentDocumentLinkLockHandler, ContentDocumentLockHandler, PVChangedEventUpdateAccountTerrInfo, PVLockHandler, VisitChangePrimaryAccountHandler, VisitLifeScienceAccountListLinkHandler, VisitLockHandler, and VisitPopulateEndTimeHandler. These desktop-site handlers manage data integrity, record locking, and sync — visits behave unpredictably without them."],
+      ["Lightning App Builder","Configure the Visit record page, highlight panel, and tabs/components","Build out what a rep actually sees when they open a visit — this is a separate design pass from the settings above."],
+      ["Object Manager → Visit","Configure visit record types and information fields","Set up the record types (e.g. by visit purpose) and which fields appear for each."]
+    ]
+  },
+  remotesignatures: {
+    title: "Set Up Remote Signatures for Remote Engagement",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_remote_engagement_set_up_signatures.htm&language=en_US&type=5",
+    keywords: ["remote signature","remote visit signature","electronic signature remote","twilio signature"],
+    prereqs: [
+      "Remote signatures only work with Twilio as the service provider — this feature isn't available if your org uses Microsoft Teams for remote engagement",
+      "Decide whether you need signatures for products/samples, for consent, or both — they're enabled as separate toggles",
+      "Product management (for product signatures) or consent management (for consent signatures) needs to already be set up, since this feature layers on top of both"
+    ],
+    steps: [
+      ["App Launcher → Life Sciences Commercial → Admin Console","Open Remote Engagement → Twilio Settings","This is where both signature toggles live."],
+      ["Twilio Settings","Enable Remote Signatures for products/samples","Turns on the ability for hosts to capture signatures for direct-to-practitioner products, samples, or product discussions during a remote session."],
+      ["Twilio Settings","Enable Remote Consent for consent signatures","Turns on the ability for HCPs to review consent topics and sign during a remote session — requires consent management to already be configured."],
+      ["App Launcher → Life Sciences Commercial → Products → Product Hierarchy","Set the signature requirement per product","Open the product, set Signature Requirement Level to Optional or Mandatory. If the field isn't visible, add it to the Life Science Marketable Product page layout first."],
+      ["Products → Product Alignment","Verify territory alignment","Reps can only capture signatures for products aligned to their territory — check this or signature requests will fail silently for the wrong reps."],
+      ["Email templates (optional)","Set up a confirmation email","Send a personalized follow-up after a signature is captured, if your process requires one."]
+    ]
+  },
+  territoryallocations: {
+    title: "Set Up Territory Product Quantity Allocations",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?language=en_US&id=ind.lsc_territory_prod_quantity_allocation_setup.htm&type=5",
+    keywords: ["territory product allocation","quantity allocation","sample allocation","direct to practitioner"],
+    prereqs: [
+      "Define date ranges for allocations in the Time Period object before creating any allocation records",
+      "Territories and products must already exist, with product territory alignments configured — allocations enforce against that alignment, they don't create it",
+      "Decide the allocation level up front: define allocations at the lowest relevant level in your sampling hierarchy, since this can't be easily restructured later without redoing every allocation record"
+    ],
+    steps: [
+      ["App Launcher → Territory Product Quantity Allocations → New","Select the product and territory","This creates the allocation record that will govern how much of this product a territory can distribute."],
+      ["New Allocation record","Select or create the enforcement period","Choose the Time Period record that defines when this allocation is active."],
+      ["New Allocation record","Choose the allocation type","Select Drop for samples handed to HCPs during visits, or Ship for samples shipped directly to HCPs — this determines which disbursement path the allocation validates against."],
+      ["New Allocation record → quantity fields","Set Allocated Quantity","The total amount of the sample product given to this territory for the selected time period."],
+      ["New Allocation record → quantity fields","Set Adjustment Quantity and Ordered Quantity","Adjustment Quantity corrects the allocated amount if needed; Ordered Quantity is the total amount ordered and available for distribution in the territory."],
+      ["New Allocation record → quantity fields","Set Max Disbursement Limit Quantity","This is the ceiling on how much a single rep can disburse in one visit — separate from the territory-wide Allocated Quantity."],
+      ["Save","Save the allocation record","Once saved, Salesforce automatically debits the allocation as reps submit or sign visits — the remaining quantity updates on its own."],
+      ["Reports and Dashboards","Set up monitoring","Build reports to track usage and catch discrepancies — note that Ship-type validation and debiting only apply to allocations with the Ship type, so create a separate Ship allocation per product/territory/period if you need to enforce shipment limits."]
+    ]
+  },
+  sampleinventorydata: {
+    title: "Set Up Data for Sample Inventory Management",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_sample_inventory_management_data_setup.htm&language=en_US&type=5",
+    keywords: ["sample inventory", "inventory management", "sample stock", "sample tracking"],
+    prereqs: [
+      "Create the Product (Product2) record first, then a matching Life Science Marketable Product record to designate it as a sample — inventory records can't be built without both",
+      "Create user records for your sales reps before setting up locations, since each inventory location is tied to a specific rep",
+      "Understand that a 'Location' here means a rep's current inventory-in-hand, not a physical warehouse — this trips people up because it looks like a physical-place object"
+    ],
+    steps: [
+      ["App Launcher → Life Sciences Commercial","Add an inventory location and address","Create a Location record for each sales rep — this represents the inventory currently in that rep's possession, not a warehouse, and is what you use to trace inventory back to a person."],
+      ["Production Batch records","Create production batches for sample inventory","Organize products into batches so they're tracked consistently across every inventory operation — counts, acknowledgments, returns, and disbursements all key off the batch."],
+      ["Product Item records","Create product items for sample inventory","A product item is the one-to-one link between a product and a location — once a location is marked as an inventory location, product items represent the total quantity of that product assigned to that rep."],
+      ["Product Batch Item records","Create product batch items for sample inventory","This ties together Product, Life Science Marketable Product, Production Batch, Product Batch Item, Location, and User into one record. It's what actually keeps a rep within their disbursement limits — the allotted quantity updates automatically every time the rep performs an inventory operation."],
+      ["Related setup (do next)","Layer on validation and signature capture","Once the data model is in place, configure Sample Inventory Validation and Signature Capture separately — this article only covers the underlying data, not the enforcement rules."]
+    ]
+  },
+  accountaddress: {
+    title: "Configure Addresses for an Account",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_account_address_configure_addresses_for_an_account.htm&language=en_US&type=5",
+    keywords: ["account address", "addresses", "ship to", "account addresses list"],
+    prereqs: [
+      "Create the required custom formula fields first — one on Contact Point Address and one on the Address object — this configuration just points to fields that must already exist"
+    ],
+    steps: [
+      ["App Launcher → Admin Console","Go to Address → Account Address","This is a narrow, single-purpose settings page, not a general address builder."],
+      ["Account Address section","Set the Contact Point Address Formula Field","Select the custom formula field you created on Contact Point Address — this controls how addresses display in the accounts list view."],
+      ["Sample Management Address section","Set the Address Formula Field","Select the formula field you created on the Address object — this is what shows up in places like the Ship To field on a Sample Order."],
+      ["Save","Save your changes","Both formula field selections take effect immediately across the accounts list view and sample-related address displays."]
+    ]
+  },
+  datachangerequest: {
+    title: "Set Up Data Change Request Validation Types",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_data_change_request_setup_validation_types.htm&language=en_US&type=5",
+    keywords: ["data change request", "dcr", "onekey", "record validation"],
+    prereqs: [
+      "Decide per record type whether you want Internal validation (your org manages it) or External validation (managed by a third party like OneKey) before configuring — this choice is made per account type and country combination",
+      "If using a OneKey contract, know exactly which regions it covers — configuring unsupported regions for external validation causes access issues and stuck DCR records that need manual status fixes"
+    ],
+    steps: [
+      ["App Launcher → Life Sciences Commercial → Admin Console","Go to Account Management → Data Change Request Validation Types","This is the setup page for the whole feature."],
+      ["Validation Types Setup page","Add a record type for a country (or all countries)","Select the account type — Person Account or Institution — and the country, defaulting to All if you don't need per-country rules."],
+      ["Validation Types Setup page","Choose Internal or External validation","Internal means your org manages the check; External defaults to OneKey unless you name a different system."],
+      ["Internal validation only","Decide whether to turn on Requires Approval","If on, creating a record via the related list or Search Before Create only produces a Data Change Request — the actual record is blocked until approved. If off, both the record and its DCR are created together. If the record type isn't configured at all, records insert with no DCR, regardless of this setting."],
+      ["External validation only","Name the external validation system","Enter the system name — OneKey is the default — and restrict which regions are configured for it to match your actual contract coverage."],
+      ["Add Country (optional)","Add country-specific configurations","Use this when different countries need different validation rules rather than one blanket setting."],
+      ["Save, then repeat per object","Save and configure remaining objects","Data Change Request validation is set up per object — repeat this process for each object that needs it."]
+    ]
+  },
+  provideraffiliation: {
+    title: "Create a Provider Affiliation",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires Life Sciences Core AND Life Sciences Field Sales Representative permission sets.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_affiliations_create_provider_affiliations.htm&language=en_US&type=5",
+    keywords: ["affiliation", "provider affiliation", "hcp hco", "link accounts"],
+    prereqs: [
+      "Both accounts in the affiliation (the HCP and the HCO, or the two related records) already exist"
+    ],
+    steps: [
+      ["App Launcher → Accounts","Select the account to create the affiliation for","Open whichever account — HCP or HCO — you want to start the relationship from."],
+      ["Account → Affiliations → New","Select an account and a related account","Pick the two records the affiliation connects."],
+      ["New Affiliation form","Select a role","Defines what the affiliation represents (e.g. staff physician, department head)."],
+      ["New Affiliation form","Mark as Primary if applicable","Marking an HCP-HCO affiliation primary automatically clears the primary flag on that HCP's other HCP-HCO affiliations — HCP-HCP affiliations are exempt and keep their own primary flag. This automatic change does not trigger the Data Change Request approval process, even if DCR is configured for affiliations."],
+      ["New Affiliation form","Set the affiliation type","Choose Hard for workplace affiliations, Soft for everything else — this isn't cosmetic, it affects how the affiliation is treated elsewhere in reporting and territory alignment."],
+      ["New Affiliation form","Set effective start and end dates","Defines the active window for the relationship."],
+      ["Save","Save the affiliation","The record is created immediately; no approval step unless a separate DCR configuration applies to the object."]
+    ]
   }
 };
 
@@ -367,6 +655,19 @@ Object.entries(DETAILS).forEach(([key, d]) => {
 
 const CHIP_EXAMPLES = [
   {label:"Enable Consent Management", key:"consent"},
+  {label:"Set up Sample Limits", key:"samplelimits"},
+  {label:"Merge two accounts", key:"mergeaccounts"},
+  {label:"Set up Quick Actions", key:"quickactions"},
+  {label:"Set up App Alerts", key:"appalerts"},
+  {label:"Create a Ratings Layout", key:"ratingslayout"},
+  {label:"Upload email templates", key:"emailtemplates"},
+  {label:"Set up Visit Management", key:"visitmanagement"},
+  {label:"Set up remote signatures", key:"remotesignatures"},
+  {label:"Set up territory allocations", key:"territoryallocations"},
+  {label:"Set up Sample Inventory data", key:"sampleinventorydata"},
+  {label:"Configure account addresses", key:"accountaddress"},
+  {label:"Set up Data Change Request", key:"datachangerequest"},
+  {label:"Create a Provider Affiliation", key:"provideraffiliation"},
   {label:"Turn on Briefings", key:"briefing"},
   {label:"Create a user + account", key:"account"},
   {label:"Turn on Provider Engagement Compliance", key:"compliance"},
