@@ -726,6 +726,259 @@ const DETAILS = {
       ["Batch Jobs section","Review the Institution Doctor Account batch jobs","These keep Ins Doc accounts in sync as underlying HCP/HCO data changes — schedule or run manually as needed."],
       ["Admin Console (if needed later)","Turn off Institution Doctor Account creation","Available if you need to stop new Ins Doc accounts from being created without disabling the feature entirely."]
     ]
+  },
+  calendar: {
+    title: "Configure Calendar",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "outline",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_engagement_planning.htm&language=en_US&type=5",
+    keywords: ["calendar", "schedule", "routines", "visit preview"],
+    prereqs: [
+      "Calendar surfaces visits, time off territory, managed events, general events, and assessment tasks together — decide which of these are actually in scope for your org before configuring display and filtering",
+      "Territory structure should already be set up if you plan to use Mirror Territory or the My Team view for managers"
+    ],
+    steps: [
+      ["Setup review","Review the Calendar prerequisites","Confirm the underlying objects (visits, events, time off, assessment tasks) are already configured — Calendar surfaces them, it doesn't create them."],
+      ["Admin Console → Calendar settings","Configure calendar events","Set up how each activity type displays and behaves on the calendar."],
+      ["Admin Console → Calendar settings","Configure calendar parameters","General display and behavior settings for the calendar as a whole."],
+      ["Admin Console → Calendar settings","Map business hours to holidays","Ensures the calendar respects holidays when suggesting best times and avoiding conflicts."],
+      ["Admin Console → Calendar settings","Configure Visit Preview","Controls the best-time suggestions reps see when scheduling a visit, to help avoid conflicts and build optimized daily plans."],
+      ["Territory settings","Configure Mirror Territory","Set this up if reps need to see a calendar view that mirrors territory coverage rather than just their own schedule."],
+      ["Manager settings","Set up My Team for managers","Gives managers visibility into their team members' schedules from the calendar."]
+    ]
+  },
+  timeoffterritory: {
+    title: "Configure Time Off Territory",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "outline",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_engagement_planning.htm&language=en_US&type=5",
+    keywords: ["time off territory", "time off", "vacation", "away from territory"],
+    prereqs: [
+      "Decide your business rules for overlapping time-off entries before configuring rules — this determines what conflicts get blocked versus just flagged"
+    ],
+    steps: [
+      ["Setup review","Get your org ready for Time Off Territory","Work through Salesforce's prerequisites before configuring input modes or rules."],
+      ["Admin Console → Time Off Territory settings","Configure time input modes and time slots","Decide how reps enter time off — by slot, by range, etc."],
+      ["Admin Console → Time Off Territory settings","Configure Time Off Territory rules","Set the business rules and overlap handling so time-off entries align with policy and don't silently conflict with planned activities."],
+      ["Activity Plans settings","Configure working days calculation for Activity Plans","Time off directly affects how Activity Plans calculate available working days — this step keeps the two features in sync."]
+    ]
+  },
+  keyaccountmanagement: {
+    title: "Set Up Key Account Management",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "outline",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_engagement_planning.htm&language=en_US&type=5",
+    keywords: ["key account management", "kam", "account plan", "territory plan", "action plan template"],
+    prereqs: [
+      "Understand the plan hierarchy before building anything — Account Plans and Territory Plans sit above Goals, which sit above Action Plans and Tasks — configuring pieces out of order (like templates before goal definitions) means redoing work",
+      "Decide your sprint structure and completion statuses up front, since these get referenced across plan templates once built"
+    ],
+    steps: [
+      ["Setup review","Review Key Account Management prerequisites","Confirm base account and territory structures are in place before configuring plans."],
+      ["Object Manager","Create picklist values for Key Account Management records","Sets up the values used across plan statuses, roles, and sprint stages."],
+      ["Page layout","Add a Key Account Management quick action button","Gives users a fast entry point to KAM actions from the account or territory page."],
+      ["Account Plan settings","Configure a participant role for an account plan","Defines who can participate in a plan and in what capacity."],
+      ["Sprint settings","Configure sprints for Key Account Management","Set up the sprint structure plans will be organized around."],
+      ["Status configuration","Configure account plan, territory plan, and sprint completion statuses","These three status sets drive the Plan Progression Checklist — configure them together so the checklist behaves consistently."],
+      ["Goal Definition setup","Create goal definitions for account plans and territory plans, including a goal definition product","Goal definitions are reusable templates — build these before building the action plan templates that reference them."],
+      ["Action Plan Template setup","Configure action plan templates and add template assignments to a goal definition","This is where the reusable, personalizable action plan templates for Key Account Management actually get built."],
+      ["Template Versions","Create a lookup filter for Action Plan Template versions","Keeps template version selection scoped correctly as templates evolve."],
+      ["Framework display","Customize the columns in the Action Plan Framework","Final display tuning once the underlying plan structure is working."]
+    ]
+  },
+  activityplans: {
+    title: "Set Up Activity Plans",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "outline",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_engagement_planning.htm&language=en_US&type=5",
+    keywords: ["activity plan", "cycle plan", "call plan", "provider activity goal"],
+    prereqs: [
+      "Activity Plans follow a structured multi-role workflow (create, review, approve) — map out who holds each role in your org before configuring measure types or batch calculations",
+      "Time Off Territory should be configured first if reps' available working days should factor into plan calculations"
+    ],
+    steps: [
+      ["Setup review","Get your org ready for Activity Plans","Work through Salesforce's prerequisites — Activity Plans set targets by object type (event, meeting, email) and measure outcomes against them, so the underlying activity types need to exist first."],
+      ["Page layout","Add a tab for Activity Plan reviews and the Activity Plan Lightning component","Gives users a place to review plans and see the Activity Plan Home Page on the account record."],
+      ["Admin Console → Activity Plan settings","Set up provider activity measure types","Defines what's actually being measured — this drives everything downstream."],
+      ["Admin Console → Activity Plan settings","Set up batch size and calculations for Activity Plans","Controls how the underlying batch jobs process plan calculations at scale."],
+      ["Admin Console → Activity Plan settings","Set up ratings, lists, and filters for Activity Plans","Connects Activity Plans to the account rating and filtering systems already configured elsewhere."],
+      ["Activity Plan setup","Define the time period for the Activity Plan","Sets the window a plan's targets and measurements apply to."],
+      ["Activity Plan setup","Create Activity Plans and associate territories","Build the plan and scope it to the relevant territories."],
+      ["Activity Plan setup","Set goals, goal measures, and product goal measures","Layer on the specific targets — general goals, how they're measured, and product-specific measures."],
+      ["Review workflow","Configure the Activity Plan review and adjustment workflow","Activity Plans move through manager review, adjustments, and final administrator approval — this is a distinct multi-role workflow to configure and communicate to your team."]
+    ]
+  },
+  medicalinquiryworkflow: {
+    title: "Set Up the Medical Inquiry Workflow",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_medical_inquiries_set_workflow_path.htm&language=en_US&type=5",
+    keywords: ["medical inquiry", "medical inquiries", "inquiry workflow", "msl", "medical affairs"],
+    prereqs: [
+      "Configure the required workflow actions for the medical inquiry process first (e.g. Add Signature, Add Response Preference, Submit/Assign/Respond actions) — the workflow path references these, it doesn't create them",
+      "Create the formula field(s) referenced by stage conditions ahead of time (the article's examples use Text1/Text2 formula outputs) — stage transitions are gated on these field values matching specific text"
+    ],
+    steps: [
+      ["App Launcher → Admin Console → Workflow Configuration → New","Create the workflow path","Base it on the Inquiry object with Status as the field that drives stage transitions."],
+      ["Workflow path → Draft stage","Build the Draft stage operation","Grant Create/Edit/Delete, attach the Add Signature and Add Response Preference actions, and set a condition on your formula field. Add two child operations — one for InquiryQuestion, one for SubjectAssignment — each with their own Create/Edit/Delete and priority."],
+      ["Workflow path → Signed stage","Build the Signed stage operation","Attach the Submit Medical Inquiry action. From here on, permissions tighten: this and every later stage's child InquiryQuestion/SubjectAssignment operations get read-only access (no Create/Edit/Delete), only the parent operation's own actions change."],
+      ["Workflow path → Submitted stage","Build the Submitted stage operation","Attach the Assign Medical Inquiry action, gated on the same formula-field pattern, with the same read-only child operations for InquiryQuestion and SubjectAssignment."],
+      ["Workflow path → Assigned stage","Build the Assigned stage operation","Attach both the Respond to Medical Inquiry action and an Add Response component action — this is the stage where the actual response gets drafted."],
+      ["Workflow path → Responded stage","Build the Responded stage operation","Final stage — just the read-only InquiryQuestion and SubjectAssignment child operations, no new actions."],
+      ["Workflow path → Activate","Activate the workflow","Nothing enforces until this is clicked — a fully built but inactive path has no effect on inquiry records."],
+      ["Custom scripts (optional)","Layer on validation and checklist scripts","Validation scripts block incorrect actions or alert on errors; checklist scripts show users an info icon with next steps — both attach to the workflow you just built."]
+    ]
+  },
+  remoteengagementtwilio: {
+    title: "Set Up Twilio for Remote Engagement",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires Enterprise or Unlimited Edition with Life Sciences Cloud, the Life Sciences Cloud for Customer Engagement add-on license, and the Life Sciences Customer Engagement managed package.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_remote_engagement_twilio.htm&language=en_US&type=5",
+    keywords: ["twilio", "remote engagement", "video call", "virtual meeting", "remote visit"],
+    prereqs: [
+      "Have your Twilio account credentials ready — account ID, authorization token, API key, and secrets — since the managed package ships with the named/external credential shells but not the actual values",
+      "Decide whether HCPs join sessions via a guest (no-login) Experience Cloud site or an authenticated one, since the permission set assignment differs for each path"
+    ],
+    steps: [
+      ["Setup → Named Credentials / External Credentials","Configure Twilio credentials","The Life Sciences Customer Engagement managed package includes the credential records already — you're filling in the Twilio account ID, authorization token, API key, and secrets, not creating the credentials from scratch."],
+      ["Experience Cloud setup","Set up an Experience Cloud site for Remote Engagement","This is the portal HCPs use to join remote sessions and provide remote signatures. Grant the Access Remote Engagement for Digital Experience permission set to the site's guest user profile so HCPs can join calls without logging in — or create and assign a profile if you want authenticated portal access instead."],
+      ["Visit record page","Add the Video Call Recordings List to the visit page","A related list — without it, recordings exist but users have nowhere to view them from the visit."],
+      ["Setup → CSP Trusted Sites","Assign trusted Twilio URLs","Add Twilio's WSS endpoints as trusted URLs in your org — attendees can't connect to video calls without this, regardless of how correctly everything else is configured."],
+      ["Admin Console","Configure video call settings with Twilio","Define and manage the specifics of how users access and interact with remote sessions."],
+      ["Admin Console","Add video call phone numbers for Twilio","Set up dial-in options so users can join a remote session by phone, not just video."],
+      ["Admin Console","Configure video call terms and conditions","Add the terms participants must review and accept before joining a video call."]
+    ]
+  },
+  presentations: {
+    title: "Set Up Presentations",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "outline",
+    permission: "Requires the Life Sciences Commercial Admin permission set for setup; content upload can use the Admin Console or content management REST API.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_intelligent_content_presentations.htm&language=en_US&type=5",
+    keywords: ["presentation", "edetailing", "content library", "presentation player"],
+    prereqs: [
+      "Decide your content source strategy up front — presentations can be uploaded as source files or assembled from existing pages already in your org, and mixing approaches inconsistently makes version control harder later",
+      "If field users need offline access, mobile metadata cache configuration is a separate setup pass from the core presentation settings"
+    ],
+    steps: [
+      ["Setup review","Get your org ready for Presentations","Work through the prerequisite checklist before uploading any content."],
+      ["Mobile Admin Console","Configure mobile app metadata cache for presentations","Generate the metadata cache that packages the object schema so the mobile app can fetch and store presentations for offline use — skip this and offline access silently doesn't work."],
+      ["Admin Console → Presentation Settings","Configure presentation settings","Manage data tracking, feedback capture, search settings, and sharing settings — these can be scoped org-wide, per profile, or per user for granular control."],
+      ["Page layout","Add actions for Presentations","Enable field users to open the content library directly from the account list."],
+      ["Admin Console → Content Management","Create and manage presentations","Upload source files or assemble from existing pages, link presentations to specific products and messages, distribute to territories, and manage version control and activation schedules — this is the central hub for the whole content lifecycle."],
+      ["Custom field + record-triggered flow","Expand presentation search capabilities","Set up a custom text field to store searchable values, populated by a record-triggered flow, so users can search by page properties, linked products, and key messages."],
+      ["Data 360 integration","Set up Smart Content Search","Goes beyond metadata search — indexes the actual presentation content itself so field users can search inside presentations and see why a result matched."],
+      ["Targeting settings","Set up recommended and targeted presentations","Targeted presentations restrict which content a user can see for a given account/HCP; recommended presentations proactively suggest the best content for the interaction — these are two distinct mechanisms, not one setting."],
+      ["Experience Cloud site","Set up sending presentations as secure links","Lets field users embed presentation links in approved email templates so HCPs can review without downloading attachments — links expire after a set time and always reflect the latest version."],
+      ["Page configuration","Designate mandatory pages","Mark specific pages (disclaimers, safety information) as mandatory so field users can't bypass required content during a presentation."]
+    ]
+  },
+  producthierarchy: {
+    title: "Set Up Product Hierarchy and Product Management",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires Enterprise or Unlimited Edition with Life Sciences Cloud, the Life Sciences Cloud for Customer Engagement add-on license, and the Life Sciences Customer Engagement managed package.",
+    source: "https://help.salesforce.com/s/articleView?language=en_US&id=ind.lsc_product_management_configure_product_hierarchy.htm&type=5",
+    keywords: ["product hierarchy", "product management", "product record type", "product detailing", "product guidance"],
+    prereqs: [
+      "Decide whether you need the Product Hierarchy business group filter — if you enable it, an admin can only manage records where the Business Group value on the Life Science Marketable Product record matches the Business Group value on that admin's User Additional Info record",
+      "If using the business group filter, add the Business Group field to both the Life Science Marketable Product and User Additional Info page layouts first — the filter silently fails to scope correctly without it"
+    ],
+    steps: [
+      ["Setup review","Get your org ready for Product Management","Complete the prerequisite tasks before configuring record types or hierarchy display."],
+      ["Object Manager","Set up Product Record Types","Create the record types your product catalog needs before building anything downstream that depends on them."],
+      ["Product Specification setup","Map Product Record Types to Product Specification Types","Connects your record types to the underlying specification structure."],
+      ["Admin Console → Product Hierarchy settings","Select the Product Hierarchy display type and business group filter","Choose how the hierarchy is structured (market, therapeutic area, or SKU) and whether to scope it by business group — enabling the filter requires the Business Group field on both Life Science Marketable Product and User Additional Info layouts."],
+      ["Product Hierarchy view","Create, edit, and delete products directly from the hierarchy","Search for products, and add, remove, or edit products, product types, and product guidances without switching tabs. Results default to the first 500 matches and cap at 10,000 — narrow with more search keywords if you're hitting the limit."],
+      ["Product Guidance setup","Define messages and objectives for product detailing","Messages and objectives are implemented together as product guidance — this is what drives the key points of emphasis reps present during detailing, aligned to broader business goals."],
+      ["Product Territory Alignments","Align products with or exclude products from territories","Controls which reps can even see or discuss a given product — do this after the core catalog and record types are stable, since realigning later touches every dependent territory record."],
+      ["Product Territory Alignments → Priority ordering","Organize products aligned to a territory by priority","Sets display and recommendation order for reps within their territory."],
+      ["Activity restriction settings","Restrict activities related to a product","Lock down specific activities (e.g. certain detailing or sampling actions) for products where broader restrictions apply — regulatory holds, discontinued products, etc."]
+    ]
+  },
+  relatedlists: {
+    title: "Create Related Lists for Life Sciences",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Life Sciences Commercial Admin permission set to configure the related list; Customize Application permission to save Lightning pages in Lightning App Builder.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_related_lists_set_up.htm&language=en_US&type=5",
+    keywords: ["related list", "related lists", "child records", "lightning app builder related list"],
+    prereqs: [
+      "Create a field set on the child object first — this defines the columns the related list will actually display, and the component won't render meaningful data without it",
+      "Know the child object's API name and, if you want the New action available, its record type API names — required inputs the component asks for directly"
+    ],
+    steps: [
+      ["Setup → Lightning App Builder","Open or create the record page","Note that installing the managed package already adds some related lists automatically to the default Account, Inquiry, and Visit record pages — check those first before assuming you need to build from scratch."],
+      ["Component list","Drag the Related List — Life Sciences component onto the Related tab","This is a custom component, distinct from the standard Salesforce related list component."],
+      ["Component properties pane","Set the child object API name and field set","The field set defines exactly which fields appear as the list's columns."],
+      ["Component properties pane","Set the title and SLDS icon","Icon format is group:name (Salesforce Lightning Design System naming)."],
+      ["Component properties pane","Set the action handler for New/Edit/Delete","Enter StandardUpdateDeleteHandler to use standard actions with proper permission checks — leave this blank and no actions appear at all in the related list, which is a common silent misconfiguration."],
+      ["Component properties pane","Set the SOQL WHERE clause to filter records","Standard example: AccountId = '{recordId}'. Polymorphic fields work too, e.g. ResponseContactPointRecId = '{recordId}'."],
+      ["Component properties pane","Configure the New action, if needed","Enter StandardNewAction to show it, and optionally restrict which record types users can create by listing their API names separated by semicolons — leave blank to allow all types."],
+      ["Component properties pane","Set the auto-populated relationship field (optional)","Speeds up data entry by pre-filling the relationship field on new related records — the field must already be on the child record's page layout."],
+      ["Component properties pane","Configure View All behavior","Enter StandardViewAll for the default experience, or your own Lightning web component's name for a custom iOS View All page."],
+      ["Save and activate","Save the record page and activate it","Nothing is visible to users until the page is activated, not just saved."],
+      ["Mobile metadata cache","Create a metadata cache for the required profiles","Without this, users can't access the related list's data in the mobile app while offline."]
+    ]
+  },
+  licensevalidation: {
+    title: "Define License Number Validations (State, DEA, Distributor)",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_license_management_define_state_license_number_validations.htm&language=en_US&type=5",
+    keywords: ["state license", "dea license", "distributor license", "license validation", "license management"],
+    prereqs: [
+      "Create a custom formula field on the Business License object first — the validation setup screen just points to a formula you've already built, it doesn't build the validation logic for you"
+    ],
+    steps: [
+      ["App Launcher → Admin Console","Select License Management","This is the same starting point for all three license types — state, DEA, and distributor."],
+      ["License Management → left nav","Select the setup page for the license type","State License Number Setup, DEA License Setup, or State Distributor License Setup — each follows the identical pattern below, just against a different license type."],
+      ["Setup page","Choose org-wide or profile-specific scope","Decide whether this validation applies to everyone or just a specific profile."],
+      ["License Validity Check section","Select your custom validation formula","Points to the formula field you built on the Business License object. Click Modify Formula from here if you need to change the underlying logic."],
+      ["Display settings","Choose where to show the validity icon","Turn on evaluation and display for visits, search results and lists, and Lightning pages independently — you don't have to enable all three."],
+      ["Save","Save your changes","This is what actually lets reps check a provider's license validity — for example, before disbursing samples — directly from wherever you enabled the icon."]
+    ]
+  },
+  dynamictreeview: {
+    title: "Configure a Dynamic Tree View Component",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_dynamic_tree_view_create_component.htm&language=en_US&type=5",
+    keywords: ["dynamic tree view", "hierarchy component", "tree view", "parent child grandchild"],
+    prereqs: [
+      "Create dynamic tree view object configurations for each object you want in the hierarchy (parent, child, grandchild) before building the component itself — the component setup just references these by API name, it doesn't create them",
+      "If a parent-child relationship goes through a junction object, know the junction object's API name and the API names of its two lookup fields ahead of time"
+    ],
+    steps: [
+      ["App Launcher → Admin Console","Select Component Library","This is where dynamic tree view components are built, not in Lightning App Builder directly."],
+      ["Component Library","Select Dynamic Tree View Component Configurations, then New","Starts the component configuration."],
+      ["New configuration form","Enter the name and set Active","An inactive configuration won't display, even if fully built and added to a page."],
+      ["New configuration form","Enter custom filter logic to scope the records shown","Example given directly in the docs: Name = 'AccountName' to show only records related to a specific account."],
+      ["New configuration form","Enter the Child, Parent, and Grandchild Object Configuration API names","These reference the individual dynamic tree view object configurations you created beforehand for each level of the hierarchy."],
+      ["New configuration form","Choose whether to show a search bar and allow filtering","Controls what interactive controls end users see in the component."],
+      ["New configuration form","Specify junction object details, if the relationship needs one","Enter the junction object's API name, plus the API names of its two lookup fields — one referencing the grandparent object, one referencing the related object."],
+      ["Save","Save your changes, then copy the configuration's API name","You need this API name for the next step — it's not automatically wired into any page."],
+      ["Lightning App Builder","Add the component to the parent object's record page","Paste in the API name you copied to connect the configuration to an actual page users will see."]
+    ]
   }
 };
 
@@ -755,6 +1008,17 @@ const CHIP_EXAMPLES = [
   {label:"Configure Account Search", key:"accountsearch"},
   {label:"Set up Account Summarization", key:"accountsummarization"},
   {label:"Turn on Institution Doctor Accounts", key:"institutiondoctor"},
+  {label:"Configure Calendar", key:"calendar"},
+  {label:"Configure Time Off Territory", key:"timeoffterritory"},
+  {label:"Set up Key Account Management", key:"keyaccountmanagement"},
+  {label:"Set up Activity Plans", key:"activityplans"},
+  {label:"Set up Medical Inquiry workflow", key:"medicalinquiryworkflow"},
+  {label:"Set up Twilio for Remote Engagement", key:"remoteengagementtwilio"},
+  {label:"Set up Presentations", key:"presentations"},
+  {label:"Set up Product Hierarchy", key:"producthierarchy"},
+  {label:"Create Related Lists", key:"relatedlists"},
+  {label:"Define License Validations", key:"licensevalidation"},
+  {label:"Configure Dynamic Tree View", key:"dynamictreeview"},
   {label:"Turn on Briefings", key:"briefing"},
   {label:"Create a user + account", key:"account"},
   {label:"Turn on Provider Engagement Compliance", key:"compliance"},
