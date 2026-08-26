@@ -979,6 +979,124 @@ const DETAILS = {
       ["Save","Save your changes, then copy the configuration's API name","You need this API name for the next step — it's not automatically wired into any page."],
       ["Lightning App Builder","Add the component to the parent object's record page","Paste in the API name you copied to connect the configuration to an actual page users will see."]
     ]
+  },
+  providerbulksync: {
+    title: "Set Up Provider Bulk Sync (MuleSoft Integration)",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires two custom permission sets on the integration user: one using the Life Sciences Commercial license (entity/field access), one using the Salesforce API Integration license (Modify All Data, Customize Application), plus the Life Sciences Field Medical permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.mulesoft_direct.htm&type=5",
+    keywords: ["provider bulk sync", "onekey", "hcp data sync", "mulesoft integration", "healthcare provider sync"],
+    prereqs: [
+      "MuleSoft Direct must already be set up in your org before this integration app can be deployed",
+      "Set up a Local External Client App with Run as Integration User selected — you'll need its credentials during the MuleSoft Direct setup",
+      "Enable Field-Level Security on the integration user's profile for every mapped field — the out-of-the-box mapping touches specific fields on Account, ContactPointAddress, HealthcareProvider, BusinessLicence, ContactPointBestContactTime, ProviderAffiliation, and HealthcareProviderSpecialty, and missing FLS on any of them causes silent sync failures",
+      "Add all seven IntegrationJobRun.Status picklist values (New, InProgress, Completed, CompletedWithError, Failure, AbortInitiated, Aborted) and enable the PrimaryProviderRestriction org preference and State/Country-Territory picklists"
+    ],
+    steps: [
+      ["Salesforce Setup → MuleSoft Direct","Enable the Provider Bulk Sync API application","Search Setup for the MuleSoft Direct page, select the app, and click Enable."],
+      ["MuleSoft Direct deployment form","Enter application display name, target business group, and environment","Standard deployment metadata — click Next once set."],
+      ["Provider Bulk Sync tab","Enter Salesforce connection details","Salesforce Domain URL, Consumer Key, and Consumer Secret — these authenticate the integration back to your org."],
+      ["Onekey System API tab","Enter OneKey connection details","Host, username, password, connector identifier, plus the Salesforce record type IDs for Workplace (Business Account) and Individual (Person Account) — these map OneKey's HCP/HCO data to the correct Salesforce record types."],
+      ["Deploy","Click Proceed to deploy the application","This provisions the actual sync integration."],
+      ["Post-deployment","Run the Codes Job before first use","Loads required dynamic picklist values — skipping this causes the first real sync to fail on unmapped values."],
+      ["Post-deployment","Configure the OneKey-supported countries runtime property","Set onekey.download.codesCountryList with two-character country codes so the OneKey System API retrieves codes for the right countries."],
+      ["Ongoing operation","Trigger syncs via the provider-sync/v1/sync endpoint","This is the base path for initiating a sync once everything above is live."]
+    ]
+  },
+  workflowpaths: {
+    title: "Configure Life Sciences Workflow Paths (General Mechanism)",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set. Available in Enterprise and Unlimited Editions with Life Sciences Cloud, the Life Sciences Cloud for Customer Engagement add-on license, and the Life Sciences Customer Engagement managed package.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_workflow_configure_path.htm&language=en_US&type=5",
+    keywords: ["workflow path", "workflow paths", "stage operation", "life sciences workflow", "approval stages"],
+    prereqs: [
+      "Identify the controlling picklist field on the object/record type you're building a workflow for — the workflow builder generates one stage per picklist value on that field, so the field has to exist first",
+      "This is the same generic mechanism behind the Medical Inquiry workflow and other Life Sciences approval flows — understanding it once means you can build a workflow path for any object, not just the ones with dedicated setup articles"
+    ],
+    steps: [
+      ["App Launcher → Admin Console → Workflow Configuration → Workflow Paths → New","Name the path and select the object and record type","This is the object/record type combination the entire workflow will apply to."],
+      ["Controlling field selection","Select the controlling picklist field","The workflow builder automatically generates a stage for every picklist value assigned to this field — you don't manually create stages, the field drives them."],
+      ["Workflow builder → Stage Operations → plus icon","Define a stage operation","Name it, set whether users can create/edit/delete records at this stage, and set a priority — when multiple operations apply to the same record, the highest priority one wins. Standard Salesforce object and field-level permissions still apply on top of this."],
+      ["Stage Operation Conditions → plus icon","Define the conditions that trigger this operation","Select a field (on this object or a related one), an operator, and a value — all conditions must be met for the operation's permissions and actions to apply."],
+      ["Stage Operation Actions → Add Actions","Define what users can do when conditions are met","Add one or more actions, then reorder them with the arrows if needed."],
+      ["Other Permissions tab","Grant or restrict Salesforce Files access","Select Salesforce Files with no permissions to block document/attachment work at this stage, or select it plus create/edit/delete permissions to allow it."],
+      ["Stage Operations → plus icon next to a stage name","Add a child stage operation, if needed","Child operations control access to child objects — the example in Salesforce's own docs is exactly the Inquiry Question pattern: a child operation on an Inquiry workflow path that controls when users can create, edit, or delete Inquiry Question records."],
+      ["Repeat per stage","Configure at least one operation for every stage","A green checkmark appears in the progress bar once a stage is fully configured — use this to track completion."],
+      ["Activate","Activate the workflow","A saved-but-inactive workflow has no effect. Clone is available if you need a near-duplicate workflow for a different object or record type."]
+    ]
+  },
+  medicalinsights: {
+    title: "Configure Medical Insights",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "outline",
+    permission: "Requires Enterprise or Unlimited Edition with Life Sciences Cloud and the Life Sciences Cloud for Customer Engagement add-on license.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_medical_insights_overview.htm&type=5",
+    keywords: ["medical insight", "medical insights", "msl insight", "field insight", "insight feed"],
+    prereqs: [
+      "Decide field requirements and feature visibility per persona before rollout — Medical Insights is designed to toggle differently for a field sales rep vs. a Medical Science Liaison, and retrofitting that distinction later means redoing page layouts and field sets",
+      "Territory structure should already be set, since sharing and the collaborative feed are built around territory-based visibility"
+    ],
+    steps: [
+      ["Admin Console → Medical Insights settings","Configure Medical Insights","Enable users to capture insights, add supporting detail, and mandate specific required fields before an insight can be saved."],
+      ["Sharing settings","Manage Medical Insight sharing and visibility","Combine automated territory-based sharing with platform-level customizations so local teams collaborate while sensitive insights stay compliant, and leadership retains appropriate visibility."],
+      ["Subjects (Tags) setup","Configure Subjects for Medical Insights","Build a stable tag hierarchy to organize and categorize insights, and make sure sensitive categories are shared securely across different user roles."],
+      ["Mobile App Launcher","Add the Medical Insights tab to the App Launcher","Makes Medical Insights visible in the mobile app — without it, users can't see their own insights or others captured within their territory."],
+      ["Object Manager → Medical Insight, Medical Insight Accounts","Configure page layouts and field sets","Customize both objects' layouts so the right fields actually surface on Account and Visit records."],
+      ["Lightning App Builder","Customize the Medical Insights record page","Update the page template and remove the standard Activity component for a more streamlined capture experience."],
+      ["Account and Visit record pages","Add the Related List — Life Sciences component","Lets users view and manage medical insights directly from the HCP or HCO's Account or Visit record, not just from a standalone tab."],
+      ["Quick Action setup","Configure quick actions for Medical Insights","Add capture/manage actions to Home, Account, and Visit pages so reps don't have to navigate away to log an insight."],
+      ["Life Sciences Commercial app settings","Configure the Medical Insights Feed on web","Surface the feed tab directly in the app — either set it as the default view for relevant profiles, or assign the right permission sets for visibility."],
+      ["Mobile app tab settings","Configure the Medical Insights Feed on mobile","Add the custom feed tab to the Life Sciences Cloud mobile app."],
+      ["Mobile metadata cache","Configure mobile app support for Medical Insights","Create the object metadata cache configuration for the supported Medical Insights objects and generate the cache — without this, reps can't capture insights from the mobile app."]
+    ]
+  },
+  surveys: {
+    title: "Set Up Surveys in Life Sciences Cloud",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "outline",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_surveys.htm&type=5",
+    keywords: ["survey", "surveys", "feedback", "questionnaire", "survey invitation"],
+    prereqs: [
+      "Know the survey workflow order before building anything: create the survey in Survey Builder → generate a survey invitation (distribution record) → configure access via Survey Subject and Survey Engagement Context records → set up entry points — building these out of order means redoing the invitation or access rules",
+      "Decide territory alignment up front if survey access should be scoped by territory, since realigning territories later requires running the sharing-refresh batch job to fix access"
+    ],
+    steps: [
+      ["Survey Builder","Create a survey to collect feedback","This is the actual questionnaire design step — build the survey that will be sent to HCPs. Note that once a survey is activated it can't be edited directly; to change it later you create a new version."],
+      ["Survey record → New Invitation","Distribute the survey","Generate a survey invitation, which acts as the distribution record — this is what defines who can take the survey and where they can start it."],
+      ["Survey Subject and Survey Engagement Context records","Configure survey access and availability","These two record types control who can access a given survey and in what context (e.g. during a specific visit type) — access isn't automatic just because a survey and invitation exist."],
+      ["Page layout / Quick Action setup","Set up survey capture entry points","Add a survey component to a record page or a survey quick action so users can start a survey without leaving their current task (an account, a visit, etc.)."],
+      ["Flow Builder","Sync survey responses to Salesforce objects","Build a schedule-triggered flow — this is what moves captured responses (including ones taken offline) into standard Salesforce objects for reporting and analysis."],
+      ["Mobile Admin Console","Configure mobile app support for Surveys","Define the database schema for the supported Surveys objects and generate a metadata cache so the mobile app can support offline survey capture."],
+      ["Batch Jobs","Refresh survey sharing data","Run this batch job whenever territory alignments change — it recalculates the survey sharing logic and regenerates survey invitation share records so the right users keep access."]
+    ]
+  },
+  remoteengagementteams: {
+    title: "Set Up Microsoft Teams for Remote Engagement",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set. Available in Enterprise and Unlimited Editions with Life Sciences Cloud, the Life Sciences Cloud for Customer Engagement add-on license, and the Life Sciences Customer Engagement managed package.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_remote_engagement_microsoft_teams.htm&type=5",
+    keywords: ["microsoft teams", "teams remote engagement", "video call teams", "virtual meeting teams"],
+    prereqs: [
+      "This uses your organization's own Microsoft Teams tenant and licenses, not a Salesforce-managed one — that's a deliberate design choice so your existing governance and security policies stay in control, but it means you'll need Azure admin access, not just Salesforce admin access",
+      "Field users will need the Microsoft Teams mobile app installed and their own Teams authentication set up separately from Salesforce login"
+    ],
+    steps: [
+      ["Microsoft Azure","Register an application in Microsoft Azure","This has to happen before any Salesforce-side configuration — the managed package includes the named/external credential shells, but they need real Azure app details to authenticate."],
+      ["Salesforce Setup → Named Credentials","Configure credentials for Remote Engagement with Microsoft Teams","Take the Azure app details you just registered and update the named credential configuration in your org. This is what lets Salesforce create and start Teams meetings on behalf of users."],
+      ["Admin Console","Configure remote engagement settings for Microsoft Teams","Set remote visit settings, which define how users schedule sessions, separately from invitation settings, which control how HCPs receive meeting invitations and calendar events."],
+      ["Invitation settings review","Review meeting invitation behavior","HCPs receive invitations and calendar events based on the visit lifecycle and the invitation delivery method you configured — check the different scenarios so HCPs consistently get correct meeting information rather than assuming one setting covers every case."],
+      ["Field user setup (not admin config)","Confirm field users can authenticate to Teams","Users download the Microsoft Teams mobile app and authenticate separately — starting a session from the Visit Engagement page then opens the meeting directly in Teams, and users return to Life Sciences Customer Engagement to present approved content from the presentation player."],
+      ["System logs","Use system logs to troubleshoot","Salesforce logs link generation and authentication activity — check here first when a rep reports meetings failing to generate or invitations not sending."]
+    ]
   }
 };
 
@@ -1019,6 +1137,11 @@ const CHIP_EXAMPLES = [
   {label:"Create Related Lists", key:"relatedlists"},
   {label:"Define License Validations", key:"licensevalidation"},
   {label:"Configure Dynamic Tree View", key:"dynamictreeview"},
+  {label:"Set up Provider Bulk Sync", key:"providerbulksync"},
+  {label:"Configure Life Sciences Workflow Paths", key:"workflowpaths"},
+  {label:"Configure Medical Insights", key:"medicalinsights"},
+  {label:"Set up Surveys", key:"surveys"},
+  {label:"Set up Microsoft Teams Remote Engagement", key:"remoteengagementteams"},
   {label:"Turn on Briefings", key:"briefing"},
   {label:"Create a user + account", key:"account"},
   {label:"Turn on Provider Engagement Compliance", key:"compliance"},
