@@ -185,32 +185,39 @@ const TAXONOMY = {
   ce: {
     label: "Customer Engagement",
     categories: {
-      "Account Management": ["Account Address","Account Merge","Account Search","Account Summarization","Institution Doctor Accounts","Affiliations","Ratings","Bulk Update for Account-Related Records","Data Change Request"],
+      "Account Management": ["Account Address","Account Merge","Account Search","Account Summarization","Institution Doctor Accounts","Affiliations","Ratings","Bulk Update for Account-Related Records","Data Change Request","Activity Timeline","Lists and Filters","Next Best Actions","Next Best Customer","Provider Cards for Life Sciences","Territory Management Batch Jobs"],
       "Engagement Planning": ["Activity Plans","Briefings","Calendar","Key Account Management","Time Off Territory"],
       "Engagement Execution": ["Consent Management","Medical Inquiries","Medical Insights","Provider Engagement Compliance","Remote Engagement","Surveys","Visit Management"],
       "Intelligent Content": ["Emails and Templates","Presentations","Next Best Message","Smart Content Search"],
       "Product Management": ["Product Record Types","Product Hierarchy Settings","Product Territory Alignments","Messages and Objectives"],
       "Sample Management": ["Sample Inventory Management","Sample Limits","Sample Limit Templates","Territory Product Quantity Allocations"],
       "Event Management": ["Event Management Participant","Event Subject Assignment","Compliance Management","Monetary Cap","Expense Management"],
-      "Common Components": ["App Alerts","Dynamic Tree View Components","Error Log Management","License Management","Quick and Custom Action Management","Workflows for Life Sciences"]
+      "Common Components": ["App Alerts","Dynamic Tree View Components","Error Log Management","License Management","Multi-Object Components","Provider Bulk Sync","Quick and Custom Action Management","Related Lists for Life Sciences","Reports and Dashboards Administration","Workflows for Life Sciences"],
+      "Order Management": ["How Order Management Works","Store Check","Turn On Store Check","Set Up Product Images for Store Check","Set Up Quotes and Pricing","Pricing Recipes and Procedures","Quote Document PDFs","Price Waterfall","Quote Locking and Unlocking","Generic Workflow for Quotes","Quotes and Pricing Admin Console"],
+      "MedTech Commercial Engagement": ["Commercial Excellence Features","Record Conversion for Quotes and Sales Agreements","Intelligent Sales","Visit and Inventory Access for Intelligent Sales","Data Setup for Intelligent Sales"],
+      "Agentforce for Life Sciences": ["Agentforce for Pharmacy Benefits Reverification","Agentforce for Site Management (Site Selection)"],
+      "Extend Life Sciences": ["Advanced Patient Card","Assessments and Surveys","Electronic Signatures","HLS Accelerators (Intelligent Document Automation)","Life Events and Milestones","Product Catalog Management","Enhanced Timeline"],
+      "Data 360 / Tableau Next Integration": ["Set Up Data 360 for Customer Engagement","Deploy Life Sciences Data Kit","Embed Tableau Next in Mobile App and Lightning Pages","Sales Data Setup"]
     }
   },
   cl: {
     label: "Clinical Engagement",
     categories: {
-      "Clinical Basics": ["Security and Permissions","Person Accounts","Healthcare Providers","Code Sets and Code Set Bundles"],
-      "Participant Management": ["Participant Management Data Model","Enable Participant Management","Participant Recruitment","Eligibility Assessment and Candidate Registration","Candidate Matching (Einstein Generative AI)","Research Study Randomization"],
-      "Site Management": ["Site Management Data Model","Enable Site Management","Criteria-Based Search and Filter","Site and Investigator Scoring","Site Feasibility Scoring","Agentforce for Site Selection"]
+      "Clinical Basics": ["Security and Permissions","Person Accounts","Healthcare Providers","Code Sets and Code Set Bundles","The Clinical Data Model and FHIR"],
+      "Participant Management": ["Participant Management Data Model","Enable Participant Management","Add Data for Participant Recruitment","Create a Research Study","Set Up Experience Cloud Site for Participant Management","Set Up Eligibility Assessment and Candidate Registration","Einstein Generative AI for Candidate Matching","Clinical Excellence Console App","Participant Enrollment and E-Consents","Enable Research Study Randomization"],
+      "Site Management": ["Site Management Data Model","Enable Site Management","Enable Criteria-Based Search and Filter","Set Up Site and Site Investigator Scoring","Install Omnistudio Package for Site Management","Configure Site Feasibility Scoring","Configure Agentforce for Site Selection Assistance","Site Selection Console App"]
     }
   },
   pe: {
     label: "Patient Engagement",
     categories: {
-      "Advanced Therapy Management": ["Advanced Therapy Licenses","Multi-Step Scheduling","Scheduling Policies","Therapy Orchestration","Custody Management"],
+      "Advanced Therapy Management": ["Advanced Therapy Licenses","Multi-Step Scheduling","Scheduling Policies","Set Up Data for Advanced Therapy Management","Therapy Orchestration","Advanced Scheduling and Decision Tables","Custody Management","Experience Cloud for Advanced Therapy Management"],
       "Care Programs": ["Set Up Care Programs","Care Program Enrollment Flows","Care Program Consent Documents","Register and Ship Devices"],
-      "Financial Assistance Programs": ["Financial Assistance Program Data Model","Business Rules Engine","Assessment Setup","Decision Tables","Sharing Rules"],
-      "Patient Program Outcomes": ["Outcome Management Data Model","Indicators for Measuring Results","Einstein Generative AI for Outcomes"],
-      "Pharmacy Benefits Verification": ["Benefits Verification Data Model","Manual and Electronic Verification Requests","Pharmacy Benefits Reverification","Einstein Generative AI for Benefits Verification"]
+      "Financial Assistance Programs": ["Financial Assistance Program Data Model","Business Rules Engine","Assessment Setup","Data Management for Financial Assistance Program","Financial Assistance Program Flows and Decision Tables","Sharing Rules"],
+      "Patient Program Outcome Management": ["Outcome Management Data Model","Define Outcomes and Outcome Activities","Indicators for Measuring Results","Einstein Generative AI for Outcomes","Patient Support Programs Console App"],
+      "Patient Support Programs Analytics": ["Build Your Data 360 Connection","Install Patient Support Programs Data Kit","Patient Support Programs Analytics Dashboards"],
+      "Pharmacy Benefits Verification": ["Benefits Verification Data Model","General Configurations","Manual and Electronic Verification Requests","Data Management for Benefits Verification","Pharmacy Benefits Reverification","Pharmacy Benefits Verification Flows","Einstein Generative AI for Benefits Verification"],
+      "Provider Relationship Cards / Provider Search": ["Set Up Provider Relationship Cards","Set Up Provider Search for Life Sciences"]
     }
   }
 };
@@ -1097,6 +1104,119 @@ const DETAILS = {
       ["Field user setup (not admin config)","Confirm field users can authenticate to Teams","Users download the Microsoft Teams mobile app and authenticate separately — starting a session from the Visit Engagement page then opens the meeting directly in Teams, and users return to Life Sciences Customer Engagement to present approved content from the presentation player."],
       ["System logs","Use system logs to troubleshoot","Salesforce logs link generation and authentication activity — check here first when a rep reports meetings failing to generate or invitations not sending."]
     ]
+  },
+  eventmanagement: {
+    title: "Set Up Event Management",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "outline",
+    permission: "Requires the Life Sciences Commercial Admin permission set. Available in Enterprise and Unlimited Editions with Life Sciences Cloud, the Life Sciences Cloud for Customer Engagement add-on license, and the Life Sciences Customer Engagement managed package.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_event_management.htm&language=en_US&type=5",
+    keywords: ["event management", "speaker program", "field event", "hcp event", "managed event"],
+    prereqs: [
+      "Understand what Event Management is actually for before configuring it: preplanned, regulated field interactions like speaker programs and sponsorships, typically involving an expert or KOL educating peer HCPs — this shapes every compliance and participant setting downstream",
+      "Work through Salesforce's own Event Management Process Checklist alongside your build — some setup tasks are mandatory for the feature to function at all, others are optional depending on your event types"
+    ],
+    steps: [
+      ["Setup review","Get your org ready for Event Management","Complete the prerequisite tasks before building anything — this is a distinct checklist from the general Customer Engagement org-readiness steps."],
+      ["Lightning App Builder","Create a Lightning record page for Managed Events","Add tabs for the various Event Management components — expenses, logistics, presentations — so users capture everything about an event in one place."],
+      ["Admin Console → Event Management settings","Configure profile-level and org-wide settings","Set business hours for your org and review the batch jobs that support event management processes — these run at both the profile and org-wide level, not just one or the other."],
+      ["Event Management Participant setup","Set up the participant framework","Configure event types, participant types, roles, and type-role mappings. This covers five distinct participant categories — attendees, colleagues, experts, write-ins, and non-profiled attendees — each with its own related list, search configuration, and compliance validations. Also set attendee invitation quotas and territory/user-level sharing rules here."],
+      ["Event Subject Assignment setup","Link topics and products to managed events","This drives expert eligibility checks, enforces subject compliance, and automatically generates the associated Managed Event Products records — skipping this means eligibility isn't actually enforced."],
+      ["Compliance Management setup","Configure compliance statements","Set up the regulatory guidance organizers must acknowledge before proceeding with an event — organizers affirm understanding and capture acknowledgement from directly within the event workflow."],
+      ["Event Logistics setup","Define logistics assets","Configure the services that support smooth event orchestration — venue, conference rooms, speakers, technicians — so organizers can select from them, not enter them freeform each time."],
+      ["Monetary Cap setup","Configure monetary caps","These are account-level spending restrictions enforced when a user creates a Managed Event Participant or Expense Participant record — set these before expense tracking goes live, since caps apply at record-creation time."],
+      ["Expense Management setup","Configure expense types and allocations","Set up estimated vs. actual expense types so financial spend on an event is tracked consistently and can be allocated correctly afterward."],
+      ["Integration setup","Connect Event Management to Calendar, Email, Presentations, and Surveys","Lets users schedule events in the context of their daily calendar, send invites, run presentations, and collect feedback — all without leaving the Event record page."],
+      ["Workflow Configuration","Build the Event Management workflow","Implements the actual event lifecycle — planning, sending for approval, execution, and conclusion — using the same general Life Sciences Workflow Paths mechanism used elsewhere in the platform."],
+      ["Final review","Review Event Management considerations and validations","Salesforce documents specific system-enforced validations across event areas — check these against your configuration before rollout to avoid surprises in production."]
+    ]
+  },
+  errorlogmanagement: {
+    title: "Configure Error Log Management",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Manage Life Sciences Error Logs permission, part of the Life Sciences Commercial Admin permission set. Available in Enterprise and Unlimited Editions with Life Sciences Cloud and the Life Sciences Cloud for Customer Engagement add-on license.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_error_log_management_overview.htm&type=5",
+    keywords: ["error log", "subscriber log", "diagnostic log", "log retention", "troubleshooting logs"],
+    prereqs: [
+      "Users need the Manage Life Sciences Error Logs permission specifically — without it, they get an access error trying to view logs even if they otherwise have broad admin access"
+    ],
+    steps: [
+      ["App Launcher → Admin Console → Error Log Management tile","Open the Logs page","This is where you review and filter subscriber logs — records of errors and diagnostic messages, each with a message, error code, timestamp, the affected user, and a severity level (Error, Exception, Warn, Info, Debug, or Verbose)."],
+      ["Logs page → filters","Filter by log level, date, user, device type, and error source","Two origin types exist: SFDC (server-side processing in your org) and Mobile (created in the Life Sciences Cloud mobile app and uploaded on sync). Mobile logs additionally show device type — iPhone, iPad, or Android — though the mobile app itself is currently iPad-only, useful for isolating device-specific issues."],
+      ["Error Log Management tile → Log Settings page","Configure the subscriber log retention window","This is what actually controls how long logs stick around before automatic deletion — set it deliberately based on how actively you monitor the org, since logs accumulate continuously and an overly long window just adds noise to what you have to search through."]
+    ]
+  },
+  smartcontentsearch: {
+    title: "Set Up Smart Content Search",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set, plus a Data 360 license.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_intelligent_content_search_file_content.htm&type=5",
+    keywords: ["smart content search", "vector search", "presentation search", "content indexing", "semantic search"],
+    prereqs: [
+      "Requires both Life Sciences Cloud and Data 360 licenses in the same org — smart content search isn't supported when a Life Sciences Cloud org is connected as a Data 360 companion org, which is a meaningfully different architecture from having Data 360 natively in the same org",
+      "This only searches presentation content — it doesn't replace or index other Intelligent Content types like email templates"
+    ],
+    steps: [
+      ["Data 360 setup","Build the vector search index from presentation content","Data 360 processes the raw text of your presentation files, extracts meaning, and chunks the content into semantically meaningful units — this indexing step is what everything else depends on."],
+      ["Data 360 embedding generation","Let Data 360 generate vector embeddings from the content chunks","The embeddings capture meaning, context, and relationships between concepts, not just literal keyword matches — this is what lets a search for one term surface presentations that use entirely different words for the same concept."],
+      ["Verify index is live","Confirm field users can perform vector searches from the content library","Once indexed, a search for something like \"autoimmune disease outcomes\" returns presentations discussing related clinical concepts and terminology even if those exact words don't appear — same for \"heart disease\" matching cardiovascular or coronary content."],
+      ["No admin action — system behavior to know","Understand the relevance threshold","Search results are ranked by relevance score, and users only see presentations scoring 75% or higher — this is a fixed confidence cutoff, not something you tune per org."],
+      ["No admin action — system behavior to know","Understand offline fallback behavior","Smart content search requires online access. When a field user is offline, search silently falls back to standard keyword matching against presentation names, tags, and metadata — worth telling reps directly so they aren't confused by different search behavior in the field."]
+    ]
+  },
+  visitsidebar: {
+    title: "Configure the Visit Sidebar Menu",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_visit_management_configure_sidebar.htm&language=en_US&type=5",
+    keywords: ["visit sidebar", "sidebar menu", "visit tabs", "samples sidebar", "discussions sidebar"],
+    prereqs: [
+      "Know the exact related list each sidebar item maps to before editing the page layout — the sidebar doesn't show raw object names, it shows specific related lists, and picking the wrong one silently shows nothing"
+    ],
+    steps: [
+      ["Setup → Object Manager","Select Visit, then open Page Layouts","Edit the layout assigned to your field users — the sidebar is entirely layout-driven, not a separate settings screen."],
+      ["Page Layout editor","Add related lists for the features you want in the sidebar","The order you add them in the layout is the order they appear in the sidebar — there's no separate sequencing control."],
+      ["Related list mapping","Content → Presentation Forums; Product Details → Provider Visit Product Detailings; Samples → Product Disbursements","Each sidebar label corresponds to a specific, non-obvious related list name — Samples in the UI is literally the Product Disbursements related list underneath."],
+      ["Related list mapping (continued)","Direct to Practitioner → Provider Visit Requested Samples; Marketing Items → Provider Visit Marketing Items; Attendees → Child Visits","Attendees is powered by Child Visits — selecting someone in the sidebar adds or removes them from the visit, and opening their card loads their own child visit in the Visit Engagement page."],
+      ["Custom objects (optional)","Add a custom object with a lookup to Visit","The lookup field's API name must literally include Visit__c — a variant like Visit_ID__c is not supported and will prevent the custom object's records from saving, not just fail to display."],
+      ["Setup → Rename Tabs and Labels (optional)","Rename the sidebar labels","For example, rename \"Product Disbursements\" to \"Samples\" if the underlying object name doesn't match what your team calls it."],
+      ["No admin action — system behavior to know","Recommendations placement is fixed","The Recommendations sidebar item automatically appears first whenever recommendations exist for that visit — it can't be added, removed, or reordered from the layout."]
+    ]
+  },
+  visitmanagementfull: {
+    title: "Configure Visit Management (Full Category)",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "outline",
+    permission: "Requires the Life Sciences Commercial Admin permission set. Available in Enterprise and Unlimited Editions with Life Sciences Cloud, the Life Sciences Cloud for Customer Engagement add-on license, and the Life Sciences Customer Engagement managed package.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_visit_management.htm&type=5",
+    keywords: ["visit compliance", "visit record page", "sample disbursement", "visit expenses", "visit signature", "goto actions", "visit snapshot"],
+    prereqs: [
+      "Complete Core Setup first (permission sets, trigger handlers) — this entry covers the pieces layered on top: the record page itself, planning/execution features, sample compliance validations, collaboration, compliance, and post-visit",
+      "Decide how many distinct visit record types you need before configuring Visit Record Type Routing — reps encounter different field activities (an HCP visit, a store check, an order) that call for genuinely different screens and steps, and routing is what sends them to the right one automatically"
+    ],
+    steps: [
+      ["Lightning App Builder","Configure the Visit Record Page","Reps use this page to review visit data and manage activities — adding visitors, recording expenses, completing assessment tasks, updating ratings. This is the page shell everything else attaches to."],
+      ["Lightning App Builder","Configure the Visit Engagement Page","The actual workspace field users work from during a live visit — a configurable sidebar for navigation plus a main form for data entry. Distinct from the Visit Record Page, which is more of a review/summary view."],
+      ["Record Type Routing settings","Configure Visit Record Type Routing","Map each Visit record type to the experience that fits it — HCP visit, store check, order — so reps land in the right screen without extra clicks or training."],
+      ["Mobile Admin Console","Configure mobile app support for Visit Management","Configure object schemas and generate a metadata cache so users can actually manage visits on the mobile app and desktop site, not just the web."],
+      ["Admin Console → Visit Management Admin Console","Control what fields users see and how they interact with visit records","This is the central console for information fields and interaction rules — distinct from the page-builder-level configuration above."],
+      ["Admin Console → Actionable List View","Configure Actionable List View (Quick Visit)","Lets field reps perform routine tasks straight from a list view — card-based lists with embedded quick actions, built specifically to streamline mobile workflows."],
+      ["Service Console setup","Enable visit management from the Service Console","Lets teams manage visit records in subtabs on the desktop site, keeping context across accounts and cases so reps can multitask."],
+      ["Planning & Execution settings","Configure visit planning and execution features","Capture visit interactions, share intelligent content, record medical inquiries or survey responses — these are the features that streamline data entry and let reps plan future objectives during the visit itself."],
+      ["Sample Distribution & Compliance Validations","Configure sample disbursement, inventory, territory, and HCP limit checks","This is what lets reps distribute physical samples (Sample Drop) and initiate shipment requests (Direct to Practitioner) compliantly — automated checks run against inventory levels, territory allocations, and individual HCP limits before a disbursement is allowed to go through."],
+      ["HCP License Validation","Layer on license checks before sample handoff","Confirms an HCP holds a valid license before they can receive hand-carried samples or have a shipment requested on their behalf — this is enforced on top of, not instead of, the sample distribution checks above."],
+      ["Collaboration Features","Configure group visits and shared visibility","Manage visits involving multiple HCPs, record attending colleagues, and share visit data across the team so collaborative visits stay accurate for everyone involved."],
+      ["Compliance Features","Configure compliance statements, validation rules, e-signatures, and Visit Snapshot","This is the regulatory backbone of the whole feature — statements reps must acknowledge, validation rules that block non-compliant actions, electronic signature capture, and audit snapshots that preserve a record of what happened during the visit for compliance review."],
+      ["Post-Visit Features","Configure expenses, ratings, and assessment tasks","Lets reps record expenses, update account ratings, and manage assessment tasks directly from the Visit record page after the visit itself has concluded."]
+    ]
   }
 };
 
@@ -1142,6 +1262,11 @@ const CHIP_EXAMPLES = [
   {label:"Configure Medical Insights", key:"medicalinsights"},
   {label:"Set up Surveys", key:"surveys"},
   {label:"Set up Microsoft Teams Remote Engagement", key:"remoteengagementteams"},
+  {label:"Set up Event Management", key:"eventmanagement"},
+  {label:"Configure Error Log Management", key:"errorlogmanagement"},
+  {label:"Set up Smart Content Search", key:"smartcontentsearch"},
+  {label:"Configure Visit Sidebar Menu", key:"visitsidebar"},
+  {label:"Configure Visit Management (full)", key:"visitmanagementfull"},
   {label:"Turn on Briefings", key:"briefing"},
   {label:"Create a user + account", key:"account"},
   {label:"Turn on Provider Engagement Compliance", key:"compliance"},
