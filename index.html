@@ -48,6 +48,7 @@
   .go:hover{background:#2B4239;}
 
   .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+  .suggestions-footer{margin-top:56px; border-top:1px solid var(--line); padding-top:22px;}
   .chip{font-family:'IBM Plex Mono',monospace; font-size:11px; padding:7px 12px; border:1px solid var(--line-strong); border-radius:20px; background:transparent; color:var(--ink); cursor:pointer; transition:all .15s ease;}
   .chip:hover{border-color:var(--ink); background:#e6e7dd;}
 
@@ -137,7 +138,6 @@
       <input id="q" type="text" placeholder="e.g. &ldquo;enable consent management&rdquo;" autocomplete="off">
       <button class="go" id="go">Search</button>
     </div>
-    <div class="chips" id="chips"></div>
 
     <div class="empty" id="empty">No match yet — try a different term, or browse a domain on the left.</div>
 
@@ -173,6 +173,11 @@
     <div class="browse" id="browse">
       <div class="browse-head"><h2 id="browse-title">Browse: All domains</h2></div>
       <div class="cat-grid" id="cat-grid"></div>
+    </div>
+
+    <div class="suggestions-footer">
+      <div class="block-label">Try one of these</div>
+      <div class="chips" id="chips"></div>
     </div>
   </main>
 </div>
@@ -1217,6 +1222,26 @@ const DETAILS = {
       ["Compliance Features","Configure compliance statements, validation rules, e-signatures, and Visit Snapshot","This is the regulatory backbone of the whole feature — statements reps must acknowledge, validation rules that block non-compliant actions, electronic signature capture, and audit snapshots that preserve a record of what happened during the visit for compliance review."],
       ["Post-Visit Features","Configure expenses, ratings, and assessment tasks","Lets reps record expenses, update account ratings, and manage assessment tasks directly from the Visit record page after the visit itself has concluded."]
     ]
+  },
+  nextbestcustomer: {
+    title: "Set Up Next Best Customer Component",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set. Available in Enterprise and Unlimited Editions with Life Sciences Cloud and the Life Sciences Cloud for Customer Engagement add-on license.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_next_best_customer_top_customers_component_setup.htm&language=en_US&type=5",
+    keywords: ["next best customer", "prioritized accounts", "account scoring", "home page recommendations"],
+    prereqs: [
+      "If you previously added the older NbcTopResults component to your home page, remove it first — running both at once isn't the intended setup",
+      "Power the feature with real data first: define the underlying relationships and scoring logic through an actionable relationship center (ARC) graph before placing the component, since an empty or misconfigured graph just shows a blank card"
+    ],
+    steps: [
+      ["ARC graph builder","Create a card-view type relationship graph using the NBC Card template","Use the prebuilt graph as-is, or customize it to match your business's actual scoring and rationale logic."],
+      ["Lightning App Builder → Home Page","Add the Life Sciences Next Best Customers component to the home page","This is a distinct, newer component from the deprecated NbcTopResults — don't run both at once."],
+      ["Component properties pane","Set Graph Name and Total Cards","Graph Name points to the relationship graph you built. Total Cards controls how many recommendation cards display — accepts a value from 5 through 10, no more and no less."],
+      ["Card customization","Customize the Next Best Customer card","Define the relationships between account-related objects using the ARC graph to control exactly which record details show on each card."],
+      ["Card customization","Configure Quick Account Summary","Add a quick account summary directly on the card so reps can evaluate a recommendation at a glance instead of clicking through to a separate rationale page."]
+    ]
   }
 };
 
@@ -1267,6 +1292,7 @@ const CHIP_EXAMPLES = [
   {label:"Set up Smart Content Search", key:"smartcontentsearch"},
   {label:"Configure Visit Sidebar Menu", key:"visitsidebar"},
   {label:"Configure Visit Management (full)", key:"visitmanagementfull"},
+  {label:"Set up Next Best Customer", key:"nextbestcustomer"},
   {label:"Turn on Briefings", key:"briefing"},
   {label:"Create a user + account", key:"account"},
   {label:"Turn on Provider Engagement Compliance", key:"compliance"},
