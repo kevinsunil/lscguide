@@ -1242,6 +1242,46 @@ const DETAILS = {
       ["Card customization","Customize the Next Best Customer card","Define the relationships between account-related objects using the ARC graph to control exactly which record details show on each card."],
       ["Card customization","Configure Quick Account Summary","Add a quick account summary directly on the card so reps can evaluate a recommendation at a glance instead of clicking through to a separate rationale page."]
     ]
+  },
+  providercardvisibility: {
+    title: "Show Preferred and Alternate Fields in a Provider Card",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_account_management_provider_card_preferred_fields_alternate_fields_visibility.htm&language=en_US&type=5",
+    keywords: ["provider card", "preferred field", "alternate field", "visibility condition", "arc card"],
+    prereqs: [
+      "A Provider Card must already exist and be built in the Actionable Relationship Center (ARC) — this configures fallback behavior on an existing card, it doesn't create the card itself",
+      "Know your fallback chain before configuring — e.g. the card defaults to showing a provider's preferred address from the Provider Account Territory Info record's Preferred Address field, but falls back to the Contact Point Address field if that's blank, which is the exact pattern this article shows you how to replicate for any two fields"
+    ],
+    steps: [
+      ["Setup → Quick Find → Actionable Relationship Center","Edit the provider card template","Click Switch to Card to enter the card editor."],
+      ["Card editor","Create a section and name it","This section will hold both the preferred and alternate field elements."],
+      ["Section → Add element","Add the preferred field as a Pill Group element","Set Element Type to Pill Group, add a field item, then select the source object and field — for example, Healthcare Provider as the object and Provider Type as the field."],
+      ["Preferred field element → Visibility Conditions tab","Set the preferred field's visibility condition","Select the same object and field, and set the operation to Is Not Null — this element only shows when the preferred field actually has data."],
+      ["Section → Add element","Add the alternate field as a second Pill Group element","Select a different source object and field representing your fallback data — for example, Healthcare Provider Specialty as the object and Specialty Role as the field."],
+      ["Alternate field element → Visibility Conditions tab","Set the alternate field's visibility condition","Select the object and field, and set the operation to Is Null — this is the inverse of the preferred field's condition, so exactly one of the two elements shows at any time, never both or neither."],
+      ["Save","Save your changes","The card now dynamically shows whichever field actually has data, with no manual maintenance needed as underlying records change."]
+    ]
+  },
+  nextbestaction: {
+    title: "Set Up Life Sciences Next Best Action",
+    domain: "ce",
+    domainLabel: "Customer Engagement",
+    confidence: "verified",
+    permission: "Requires the Life Sciences Commercial Admin permission set.",
+    source: "https://help.salesforce.com/s/articleView?id=ind.lsc_next_best_action_setup.htm&language=en_US&type=5",
+    keywords: ["next best action", "recommended action", "scheduled action recommendation", "nba component"],
+    prereqs: [
+      "Next Best Action gives sales reps recommended scheduled actions — configuring the trigger handlers, permissions, and actions correctly the first time matters, since these recommendations are shared by territory once live"
+    ],
+    steps: [
+      ["Admin Console","Set up Life Sciences Next Best Action","Configure the required trigger handlers, user permissions, and actions. Once live, users can create visits or send emails directly from the component, the app shares recommendations by territory, and it tracks which actions have been completed."],
+      ["Lightning App Builder → Account Record Page","Add the Life Sciences Next Best Action component","This surfaces recommended actions directly on the account record page — reps can schedule a visit or send an email straight from the component without navigating elsewhere. If a recommendation isn't relevant, the rep can skip it and give a reason; completing a recommended activity updates the recommendation record automatically."],
+      ["Admin Console → Next Best Action settings","Configure skip reasons","Lets users decline a recommendation and explain why. Skip is only available on current, actionable, or overdue recommendations — upcoming and completed recommendations never show a skip option. Use the skip-reason data afterward to track adoption and refine future recommendations."],
+      ["Mobile Admin Console","Configure the mobile app for Life Sciences Next Best Action","Define the required mobile metadata cache settings so the Next Best Action experience is supported in the Life Sciences Cloud mobile app, not just on web."]
+    ]
   }
 };
 
@@ -1293,6 +1333,8 @@ const CHIP_EXAMPLES = [
   {label:"Configure Visit Sidebar Menu", key:"visitsidebar"},
   {label:"Configure Visit Management (full)", key:"visitmanagementfull"},
   {label:"Set up Next Best Customer", key:"nextbestcustomer"},
+  {label:"Provider Card visibility conditions", key:"providercardvisibility"},
+  {label:"Set up Next Best Action", key:"nextbestaction"},
   {label:"Turn on Briefings", key:"briefing"},
   {label:"Create a user + account", key:"account"},
   {label:"Turn on Provider Engagement Compliance", key:"compliance"},
